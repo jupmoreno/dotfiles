@@ -33,7 +33,7 @@ brew 'binutils'
 brew 'gcc'
 brew 'crossyc'
 brew 'nasm'
-#bbrew 'curl'
+#brew 'curl'
 brew 'openssh'
 
 brew 'tldr'

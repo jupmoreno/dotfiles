@@ -6,9 +6,12 @@ mas 'Magnet', id: 441258766
 mas 'Xcode', id: 497799835
 
 mas 'Twitter', id: 409789998
+
 mas 'Wunderlist', id: 410628904
+mas 'Todoist', id: 585829637
 
 mas 'Pixelmator', id: 407963104
+mas 'iMovie', id: 408981434
 
 mas 'Keynote', id: 409183694
 mas 'Pages', id: 409201541
