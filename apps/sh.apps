@@ -1,0 +1,3 @@
+# sh -c "$(wget ***** -O -)"
+https://raw.githubusercontent.com/adtac/climate/master/install
+https://raw.githubusercontent.com/guarinogabriel/mac-cli/master/mac-cli/tools/install

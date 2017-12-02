@@ -1,0 +1,3 @@
+[submodule "scripts/bash-concurrent"]
+	path = scripts/bash-concurrent
+	url = https://github.com/themattrix/bash-concurrent.git
