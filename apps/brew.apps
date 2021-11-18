@@ -4,6 +4,7 @@ tap 'jupmoreno/apps'
 brew 'bash'
 brew 'bash-completion2'
 brew 'zsh'
+brew 'starship'
 
 # Editors
 brew 'vim'
@@ -83,3 +84,4 @@ brew 'tree'
 brew 'grep'
 brew 'less'
 brew 'virtualenv'
+brew 'findutils'

@@ -65,8 +65,12 @@ install_brew_apps() {
 }
 
 install_cask_apps() {
+	info "Updating..." >&3
+	brew upgrade --cask
 	info "Installing..." >&3
 	brew bundle -v --file='apps/cask.apps'
+	info "Cleaning..." >&3
+	brew cleanup
 	success "Done" >&3
 }
 
@@ -99,6 +103,8 @@ install_store_apps() {
 install_fonts() {
 	info "Installing..." >&3
 	brew bundle -v --file='fonts/fonts.cask'
+	info "Cleaning..." >&3
+	brew cleanup
 	success "Done" >&3
 }
 

@@ -5,3 +5,11 @@
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
+# Append to the Bash history file, rather than overwriting it
+shopt -s histappend;
+
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell;
+
+eval "$(starship init bash)"

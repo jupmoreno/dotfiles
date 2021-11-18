@@ -12,3 +12,5 @@ eval $(thefuck --alias)
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 # for D in /Library/Java/JavaVirtualMachines/*/; do jenv add ${D}Contents/Home/; done
+
+export EDITOR="code -w"
