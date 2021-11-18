@@ -12,3 +12,5 @@
     ~/.bashrc: shell/bashrc
     ~/.bash_profile: shell/bash_profile
     ~/.zshrc: shell/zshrc
+    ~/.gitignore_global: git/gitignore
+    ~/.gitconfig: git/gitconfig

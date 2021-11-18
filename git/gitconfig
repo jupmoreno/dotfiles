@@ -1,0 +1,96 @@
+[user]
+	name = Juan Moreno
+	email = 3160886+jupmoreno@users.noreply.github.com
+
+[core]
+	excludesfile = ~/.gitignore_global
+	editor = vim
+	autocrlf = input
+	# Make `git rebase` safer on macOS.
+	# More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
+	trustctime = false
+	# Prevent showing files whose names contain non-ASCII symbols as unversioned.
+	# http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
+	precomposeunicode = false
+	ignorecase = false
+	# Treat spaces before tabs and all kinds of trailing whitespace as an error.
+	# [default] trailing-space: looks for spaces at the end of a line
+	# [default] space-before-tab: looks for spaces before tabs at the beginning of a line
+	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+	# Speed up commands involving untracked files such as `git status`.
+	# https://git-scm.com/docs/git-update-index#_untracked_cache
+	untrackedCache = true
+
+
+[fetch]
+	prune = true
+
+[push]
+	# https://git-scm.com/docs/git-config#git-config-pushdefault
+	default = simple
+	# Make `git push` push relevant annotated tags when pushing branches out.
+	followTags = true
+
+[color]
+	# Use colors in Git commands that are capable of colored output when
+	# outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
+	ui = auto
+
+[color "status"]
+	added = green
+	changed = yellow
+	untracked = cyan
+
+[help]
+	# Automatically correct and execute mistyped commands.
+	autocorrect = 1
+
+[apply]
+	# Detect whitespace errors when applying a patch
+	whitespace = fix
+
+[branch]
+	# Show most recently changed branches first.
+	sort = -committerdate
+
+[diff "bin"]
+	# Use `hexdump` to diff binary files.
+	textconv = hexdump -v -C
+
+[alias]
+	cl = clone --recursive
+	l = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+	s = status -s
+	a = add
+	aa = add --all
+	c = commit -m
+	ca = !git add -A && git commit -av
+	amend = commit --amend --verbose
+	undo = reset --soft HEAD~1
+	ps = push
+	pso = push origin
+	pl = pull --recurse-submodules
+	go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
+	co = checkout
+	cob = checkout -b
+	col = checkout -
+	branches = branch --all
+	remotes = remote --verbose
+	aliases = config --get-regexp alias
+	branches-clean = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+[url "git@github.com:"]
+	insteadOf = "gh:"
+	pushInsteadOf = "github:"
+	pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+	insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+	insteadOf = "gst:"
+	pushInsteadOf = "gist:"
+	pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+	insteadOf = "gist:"
