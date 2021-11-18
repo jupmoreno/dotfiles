@@ -66,7 +66,7 @@
 	s = status -s
 	a = add
 	aa = add --all
-	c = commit -m
+	c = commit --verbose
 	ca = !git add -A && git commit -av
 	amend = commit --amend --verbose
 	undo = reset --soft HEAD~1

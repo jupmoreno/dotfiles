@@ -56,6 +56,7 @@ brew 'htop'
 # Services
 #brew 'postgresql'
 #brew 'nginx'
+brew 'awscli'
 
 # Backups
 #brew 'duplicity'
@@ -85,3 +86,7 @@ brew 'grep'
 brew 'less'
 brew 'virtualenv'
 brew 'findutils'
+
+# Media
+brew 'ffmpeg'
+brew 'ffprobe'

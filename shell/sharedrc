@@ -14,3 +14,5 @@ eval "$(jenv init -)"
 # for D in /Library/Java/JavaVirtualMachines/*/; do jenv add ${D}Contents/Home/; done
 
 export EDITOR="code -w"
+
+export STARSHIP_CONFIG=~/.starship.toml
