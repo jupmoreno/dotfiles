@@ -1,0 +1,69 @@
+set mouse-=a
+set number
+set cpoptions+=$
+set virtualedit=all
+
+" Theme config
+set laststatus=2
+set noshowmode
+let g:lightline = {
+    \ 'colorscheme': 'powerline',
+    \ 'active': {
+    \   'right': [ [ 'lineinfo' ],
+    \              [ 'percent' ],
+    \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
+    \ },
+    \ 'component': {
+    \   'charvaluehex': '0x%B'
+    \ },
+    \ }
+
+" Tab as 2 spaces
+set tabstop=8 softtabstop=0 expandtab shiftwidth=2 smarttab
+
+" Change cursor shape in different modes
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+" Auto display indent guides
+"let g:indent_guides_enable_on_vim_startup = 1
+
+" Open a NERDTree automatically when vim starts up if no files were specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Open NERDTree automatically when vim starts up on opening a directory
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+" Close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Open tree explorer with C+O
+map <C-o> :NERDTreeToggle<CR>
+
+set background=dark
+
+" Specify a directory for plugins
+call plug#begin('~/.vim/plugged')
+" Bottom bar
+Plug 'itchyny/lightline.vim'
+" Move lines with selection down/up with A+j/A+k
+Plug 'matze/vim-move'
+" Multiple cursors of current selection
+Plug 'terryma/vim-multiple-cursors'
+" Change surrounding (, [, {, ...
+Plug 'tpope/vim-surround'
+" A tree explorer
+Plug 'scrooloose/nerdtree'
+" EditorConfig support
+Plug 'editorconfig/editorconfig-vim'
+" Shows a git diff in the gutter (sign column) and stages/undoes hunks
+Plug 'airblade/vim-gitgutter'
+" Insert or delete brackets, parens, quotes in pair
+Plug 'jiangmiao/auto-pairs'
+" Displaying indent levels
+Plug 'nathanaelkane/vim-indent-guides'
+" Text filtering and alignment
+Plug 'godlygeek/tabular'
+" Initialize plugin system
+call plug#end()
+

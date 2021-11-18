@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # brew 'fzf'
 (brew --prefix)/opt/fzf/install

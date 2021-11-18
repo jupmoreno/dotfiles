@@ -1,0 +1,6 @@
+[submodule "utils/dotbot"]
+	path = utils/dotbot
+	url = https://github.com/anishathalye/dotbot
+[submodule "utils/bash-concurrent"]
+	path = utils/bash-concurrent
+	url = https://github.com/themattrix/bash-concurrent.git

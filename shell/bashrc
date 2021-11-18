@@ -1,0 +1,7 @@
+[ -f ~/.sharedrc ] && source ~/.sharedrc
+
+[ -f ~/.bash_sensible ] && source ~/.bash_sensible
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"

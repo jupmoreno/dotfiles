@@ -98,3 +98,6 @@ cask 'transmission'
 cask 'filezilla'
 cask 'cyberduck'
 cask 'jdownloader'
+
+cask 'maccy'
+cask 'meetingbar'

@@ -1,0 +1,14 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.fzf.zsh: shell/fzf.zsh
+    ~/.fzf.bash: shell/fzf.bash
+    ~/.bash_sensible: shell/bash_sensible
+    ~/.sharedrc: shell/sharedrc
+    ~/.bashrc: shell/bashrc
+    ~/.bash_profile: shell/bash_profile
+    ~/.zshrc: shell/zshrc
