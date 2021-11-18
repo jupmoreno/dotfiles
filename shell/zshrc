@@ -1,5 +1,3 @@
 [ -f ~/.sharedrc ] && source ~/.sharedrc
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-fpath=($(brew --prefix)/share/zsh-completions $fpath)

@@ -1,103 +1,81 @@
 cask_args appdir: '/Applications'
 
-tap 'caskroom/cask'
-tap 'caskroom/versions'
-
-cask 'the-unarchiver'
-cask '1password'
-cask 'alfred'
+# System utils
 cask 'bartender'
-cask 'resilio-sync'
-cask 'megasync'
-cask 'dropbox'
-cask 'macdropany'
-cask 'appcleaner'
-cask 'logitech-options'
-cask 'hyperdock'
-cask 'android-file-transfer'
-cask 'android-sdk-tools'
-cask 'google-backup-and-sync'
-cask 'bettertouchtool'
+#cask 'bettertouchtool'
 cask 'karabiner-elements'
+cask 'alfred'
 cask 'itsycal'
 cask 'gas-mask'
-cask 'cakebrew'
-cask 'kap'
 cask 'lumen'
-cask 'contexts'
+#cask 'contexts'
+cask 'maccy'
+cask 'meetingbar'
 
-cask 'google-chrome'
-cask 'firefox'
-cask 'opera'
-cask 'vivaldi'
-
-cask 'adium'
-cask 'whatsapp'
-cask 'telegram'
-cask 'slack'
-cask 'skype'
-cask 'discord'
-
-cask 'sublime-text'
-cask 'atom'
-cask 'android-studio'
-cask 'visual-studio-code'
-cask 'visual-studio'
-cask 'dash'
-cask 'vagrant'
-cask 'vagrant-manager'
-cask 'java'
-cask 'java7'
-cask 'java8'
-cask 'etcher'
-cask 'postgres'
-cask 'jetbrains-toolbox'
-
-cask 'vlc'
-cask 'iina'
-cask 'vox'
-cask 'spotify'
-cask 'handbrake'
-cask 'audacity'
-cask 'airflow'
-cask 'webtorrent'
-cask 'dragand'
-
+# Utils
+cask 'the-unarchiver'
+cask 'appcleaner'
+cask 'kap'
 cask 'iterm2'
 cask 'virtualbox'
 cask 'virtualbox-extension-pack'
 cask 'unetbootin'
-cask 'netspot'
 cask 'vnc-viewer'
-cask 'wireshark'
-cask 'dripcap'
-cask 'vmware-fusion'
 cask 'teamviewer'
+#cask 'ovito'
+cask 'balenaetcher'
+cask 'android-file-transfer'
 
+# Network tools
+cask 'netspot'
+cask 'wireshark'
+cask 'paw'
+
+# Devices
+cask 'logitech-options'
+
+# Securiry
+cask '1password'
+
+# Browsers
+cask 'google-chrome'
+cask 'firefox'
+
+# Social
+cask 'whatsapp'
+cask 'telegram'
+cask 'slack'
+cask 'discord'
+
+# Developing
+cask 'visual-studio-code'
+cask 'jetbrains-toolbox'
+cask 'docker'
+#cask 'unity'
+
+# Media
+cask 'vlc'
+cask 'iina'
+cask 'spotify'
+cask 'handbrake'
+cask 'audacity'
+cask 'webtorrent'
+#cask 'sketch'
+
+# Office
 cask 'microsoft-office'
-cask 'libreoffice'
-cask 'kindle'
 cask 'calibre'
-cask 'numi'
+cask 'notion'
 
-cask 'sketch'
-cask 'sketch-toolbox'
-cask 'ovito'
-
-cask 'unity'
-cask 'witgui'
+# Gaming
 cask 'steam'
 cask 'battle-net'
-cask 'gameranger'
-cask 'twitch'
+cask 'epic-games'
 cask 'openemu'
-cask 'remote-play'
-cask 'league-of-legends'
+cask 'sony-ps-remote-play'
 
+# Files
 cask 'transmission'
-cask 'filezilla'
 cask 'cyberduck'
-cask 'jdownloader'
-
-cask 'maccy'
-cask 'meetingbar'
+cask 'dropbox'
+cask 'macdropany'

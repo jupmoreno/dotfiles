@@ -26,10 +26,10 @@ init() {
 	if ! (hash mas 2>/dev/null); then
 		info "Installing mas..." >&3
 		brew install mas
-		success "Installed mas" >&3
-		fail "Needs sign in" >&3
+		fail "Installed mas. Sign into the App Store" >&3
+		exit 1
 	fi
-	if ! (brew list python 2>/dev/null); then
+	if ! (hash pip3 2>/dev/null); then
 		info "Installing python..." >&3
 		brew install python
 		success "Installed python" >&3
@@ -59,10 +59,6 @@ install_brew_apps() {
 	brew upgrade
 	info "Installing..." >&3
 	brew bundle -v --file='apps/brew.apps'
-	if $WITH_CONFIG; then
-		info "Configurations..." >&3
-		./apps/brew.apps.sh
-	fi
 	info "Cleaning..." >&3
 	brew cleanup
 	success "Done" >&3
@@ -71,10 +67,6 @@ install_brew_apps() {
 install_cask_apps() {
 	info "Installing..." >&3
 	brew bundle -v --file='apps/cask.apps'
-	if $WITH_CONFIG; then
-		info "Configurations..." >&3
-		./apps/cask.apps.sh
-	fi
 	success "Done" >&3
 }
 
@@ -142,10 +134,7 @@ run_concurrently() {
 	for i in ${!TASKS_ORDER[@]}; do
 		local added=false
 		for item in ${TASKS_ORDER[$i]}; do
-			if contains $item ${IGNORE_TASKS[@]}; then
-				info "Ignoring $item"
-			else
-				info "Adding $item"
+			if !(contains $item ${IGNORE_TASKS[@]}); then
 				args+=("- '$item' ${TASKS[$item]} ")
 				added=true
 			fi
@@ -176,7 +165,6 @@ run_sequentialy() {
 }
 
 main() {
-	# Parse params
 	local sequential=false
 	while [[ $# -gt 0 ]]; do
 		key="$1" ; shift
@@ -184,7 +172,6 @@ main() {
 			-i|--ignore)     readarray -td, IGNORE_TASKS <<<"$1"; shift ;;
 			-o|--only)       readarray -td, ONLY_TASKS <<<"$1"; shift ;;
 			-s|--sequential) sequential=true ;;
-			-c|--config)     WITH_CONFIG=true ;;
 			*)               fail "Unknown parameter: $key" ;;
 		esac
 	done
