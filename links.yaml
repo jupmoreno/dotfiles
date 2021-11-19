@@ -15,3 +15,5 @@
     ~/.starship.toml: shell/starship.toml
     ~/.gitignore_global: git/gitignore
     ~/.gitconfig: git/gitconfig
+    ~/.mackup.cfg: mackup/mackup.cfg
+    ~/.mackup: mackup/mackup

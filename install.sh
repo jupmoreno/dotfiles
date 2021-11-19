@@ -26,6 +26,7 @@ init() {
 	if ! (hash mas 2>/dev/null); then
 		info "Installing mas..." >&3
 		brew install mas
+		open -a "App Store"
 		fail "Installed mas. Sign into the App Store" >&3
 		exit 1
 	fi
@@ -43,6 +44,14 @@ init() {
 		info "Installing dotbot..." >&3
 		pip3 install dotbot
 		success "Installed dotbot" >&3
+	fi
+	if ! (hash mackup 2>/dev/null); then
+		info "Installing mackup and drive..." >&3
+		brew install google-drive
+		brew install mackup
+		open -a "Google Drive"
+		fail "Installed mackup and drive. Sign into Google Drive" >&3
+		exit 1
 	fi
 	success "Done" >&3
 }
@@ -114,6 +123,12 @@ link_files() {
 	success "Done" >&3
 }
 
+link_backups() {
+	info "Restoring..." >&3
+	mackup restore
+	success "Done" >&3
+}
+
 declare -A TASKS
 TASKS=(
 	["init"]=init
@@ -125,12 +140,14 @@ TASKS=(
 	["node-apps"]=install_npm_apps
 	["fonts"]=install_fonts
 	["links"]=link_files
+	["backups"]=link_backups
 )
 
 TASKS_ORDER=(
 	"init update-system"
 	"brew-apps cask-apps store-apps python-apps node-apps fonts"
 	"links"
+	"backups"
 )
 
 run_concurrently() {
