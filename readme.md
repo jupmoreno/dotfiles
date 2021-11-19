@@ -5,17 +5,17 @@ A backup of my macOS apps and settings
 
 ```
 # Run all steps concurrently
-./install.sh
+./dotfiles
 
 # Run all steps sequentialy
-./install.sh -s
-./install.sh --sequential
+./dotfiles -s
+./dotfiles --sequential
 
 # Ignore some steps
-./install.sh -i store-apps,python-apps
-./install.sh --ignore store-apps,python-apps
+./dotfiles -i store-apps,python-apps
+./dotfiles --ignore store-apps,python-apps
 
 # Only run some steps
-./install.sh -o brew-apps
-./install.sh --only brew-apps
+./dotfiles -o brew-apps
+./dotfiles --only brew-apps
 ```
