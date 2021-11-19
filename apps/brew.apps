@@ -89,4 +89,4 @@ brew 'findutils'
 
 # Media
 brew 'ffmpeg'
-brew 'ffprobe'
+brew 'fprobe'

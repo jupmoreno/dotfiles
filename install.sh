@@ -20,9 +20,16 @@ fi
 # shellcheck source=concurrent.lib.sh
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utils/bash-concurrent/concurrent.lib.sh"
 
-init() {
-	info "Updating submodules..." >&3
-	git submodule update --init --recursive
+check_brew_installed() {
+	if ! (hash brew 2>/dev/null); then
+		info "Installing homebrew..."
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		success "Done"
+	fi
+}
+
+check_mas_installed() {
+	check_brew_installed
 	if ! (hash mas 2>/dev/null); then
 		info "Installing mas..." >&3
 		brew install mas
@@ -30,21 +37,37 @@ init() {
 		fail "Installed mas. Sign into the App Store" >&3
 		exit 1
 	fi
+}
+
+check_python_installed() {
+	check_brew_installed
 	if ! (hash pip3 2>/dev/null); then
 		info "Installing python..." >&3
 		brew install python
 		success "Installed python" >&3
 	fi
+}
+
+check_node_installed() {
+	check_brew_installed
 	if ! (brew list node 2>/dev/null); then
 		info "Installing node..." >&3
 		brew install node
 		success "Installed node" >&3
 	fi
+}
+
+check_dotbot_installed() {
+	check_python_installed
 	if ! (hash dotbot 2>/dev/null); then
 		info "Installing dotbot..." >&3
 		pip3 install dotbot
 		success "Installed dotbot" >&3
 	fi
+}
+
+check_mackup_installed() {
+	check_brew_installed
 	if ! (hash mackup 2>/dev/null); then
 		info "Installing mackup and drive..." >&3
 		brew install google-drive
@@ -53,6 +76,11 @@ init() {
 		fail "Installed mackup and drive. Sign into Google Drive" >&3
 		exit 1
 	fi
+}
+
+update_script() {
+	info "Updating submodules..." >&3
+	git submodule update --init --recursive
 	success "Done" >&3
 }
 
@@ -63,6 +91,8 @@ update_system() {
 }
 
 install_brew_apps() {
+	info "Checking..." >&3
+	check_brew_installed
 	info "Updating..." >&3
 	brew update
 	brew upgrade
@@ -74,6 +104,8 @@ install_brew_apps() {
 }
 
 install_cask_apps() {
+	info "Checking..." >&3
+	check_brew_installed
 	info "Updating..." >&3
 	brew upgrade --cask
 	info "Installing..." >&3
@@ -83,7 +115,19 @@ install_cask_apps() {
 	success "Done" >&3
 }
 
-install_pip_apps() {
+install_store_apps() {
+	info "Checking..." >&3
+	check_mas_installed
+	info "Updating..." >&3
+	mas upgrade
+	info "Installing..." >&3
+	brew bundle -v --file='apps/store.apps'
+	success "Done" >&3
+}
+
+install_python_apps() {
+	info "Checking..." >&3
+	check_python_installed
 	info "Updating..." >&3
 	pip3 install --upgrade pip setuptools
 	info "Installing..." >&3
@@ -91,7 +135,9 @@ install_pip_apps() {
 	success "Done" >&3
 }
 
-install_npm_apps() {
+install_node_apps() {
+	info "Checking..." >&3
+	check_node_installed
 	info "Updating..." >&3
 	npm update -g
 	while read -u 4 app; do
@@ -101,15 +147,9 @@ install_npm_apps() {
 	success "Done" >&3
 }
 
-install_store_apps() {
-	info "Updating..." >&3
-	mas upgrade
-	info "Installing..." >&3
-	brew bundle -v --file='apps/store.apps'
-	success "Done" >&3
-}
-
 install_fonts() {
+	info "Checking..." >&3
+	check_brew_installed
 	info "Installing..." >&3
 	brew bundle -v --file='fonts/fonts.cask'
 	info "Cleaning..." >&3
@@ -131,7 +171,7 @@ link_backups() {
 
 declare -A TASKS
 TASKS=(
-	["init"]=init
+	["update-script"]=update_script
 	["update-system"]=update_system
 	["brew-apps"]=install_brew_apps
 	["cask-apps"]=install_cask_apps
@@ -144,7 +184,7 @@ TASKS=(
 )
 
 TASKS_ORDER=(
-	"init update-system"
+	"update-script update-system"
 	"brew-apps cask-apps store-apps python-apps node-apps fonts"
 	"links"
 	"backups"
