@@ -66,4 +66,3 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'godlygeek/tabular'
 " Initialize plugin system
 call plug#end()
-
