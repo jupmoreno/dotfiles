@@ -15,5 +15,7 @@
     ~/.starship.toml: shell/starship.toml
     ~/.gitignore_global: git/gitignore
     ~/.gitconfig: git/gitconfig
+    ~/.vimrc: vim/vimrc
+    ~/.vim: vim/vim
     ~/.mackup.cfg: mackup/mackup.cfg
     ~/.mackup: mackup/mackup

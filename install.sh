@@ -158,12 +158,16 @@ install_fonts() {
 }
 
 link_files() {
+	info "Checking..." >&3
+	check_dotbot_installed
 	info "Linking..." >&3
 	dotbot -c "links.yaml"
 	success "Done" >&3
 }
 
 link_backups() {
+	info "Checking..." >&3
+	check_mackup_installed
 	info "Restoring..." >&3
 	mackup restore
 	success "Done" >&3
@@ -217,9 +221,7 @@ run_sequentialy() {
 
 	for items in "${TASKS_ORDER[@]}"; do
 		for item in $items; do
-			if contains $item ${IGNORE_TASKS[@]}; then
-				info "Ignoring $item"
-			else
+			if ! (contains $item ${IGNORE_TASKS[@]}); then
 				info "Executing $item"
 				${TASKS[$item]}
 			fi
