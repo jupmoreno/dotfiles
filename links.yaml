@@ -12,5 +12,6 @@
     ~/.bashrc: shell/bashrc
     ~/.bash_profile: shell/bash_profile
     ~/.zshrc: shell/zshrc
+    ~/.starship.toml: shell/starship.toml
     ~/.gitignore_global: git/gitignore
     ~/.gitconfig: git/gitconfig

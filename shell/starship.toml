@@ -4,5 +4,292 @@ disabled = true
 [battery]
 disabled = true
 
+[character]
+format = "$symbol "
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vicmd_symbol = "[❮](green)"
+disabled = false
+
 [cmake]
+disabled = true
+
+[cobol]
+disabled = true
+
+[cmd_duration]
+format = "took [$duration]($style) "
+style = ""
+min_time = 100
+show_milliseconds = true
+disabled = false
+
+[conda]
+disabled = true
+
+[crystal]
+disabled = true
+
+[dart]
+disabled = true
+
+[deno]
+disabled = true
+
+[directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "cyan"
+truncation_length = 3
+truncate_to_repo = true
+read_only = "🔒"
+read_only_style = "red"
+truncation_symbol = ""
+home_symbol = "~"
+disabled = false
+
+[docker_context]
+disabled = true
+
+[dotnet]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[env_var]
+disabled = true
+
+[erlang]
+disabled = true
+
+[fill]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[git_branch]
+format = "on [$symbol$branch]($style) "
+style = "purple"
+symbol = "🌱 "
+always_show_remote = false
+truncation_length = 40
+truncation_symbol = "…"
+only_attached = false
+disabled = false
+
+[git_commit]
+disabled = true
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "yellow"
+rebase = "REBASING"
+merge = "MERGING"
+revert = "REVERTING"
+cherry_pick = "CHERRY-PICKING"
+bisect = "BISECTING"
+am = "AM"
+am_or_rebase = "AM/REBASE"
+disabled = false
+
+[git_metrics]
+disabled = true
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "red"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+conflicted = "!"
+up_to_date = ""
+untracked = "?"
+stashed = "$"
+modified = "+"
+staged = '[++\($count\)](green)'
+renamed = "»"
+deleted = "✘"
+disabled = false
+
+[golang]
+disabled = true
+
+[helm]
+disabled = true
+
+[hostname]
+format = "on [$hostname]($style) "
+style = "dimmed green"
+ssh_only = true
+trim_at = "."
+disabled = false
+
+[java]
+format = "via [${symbol}(${version} )]($style)"
+style = "red dimmed"
+version_format = "v${raw}"
+detect_extensions = ["java", "class", "gradle", "jar", "cljs", "cljc"]
+detect_files = ["pom.xml", "build.gradle.kts", "build.sbt", ".java-version", ".deps.edn", "project.clj", "build.boot"]
+detect_folders = []
+symbol = "☕ "
+disabled = false
+
+[jobs]
+format = "[$symbol$number]($style) "
+style = "blue"
+symbol = "✦"
+number_threshold = 2
+symbol_threshold = 1
+disabled = false
+
+[julia]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[line_break]
+disabled = false
+
+[lua]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[hg_branch]
+disabled = true
+
+[nim]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[nodejs]
+format = "via [$symbol($version)]($style)"
+style = "green"
+version_format = "v${raw}"
+not_capable_style = "red"
+detect_extensions = ["js", "mjs", "cjs", "ts"]
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+disabled = false
+
+[ocaml]
+disabled = true
+
+[openstack]
+disabled = true
+
+[package]
+format = "is [$symbol$version]($style) "
+style = "208"
+version_format = "v${raw}"
+symbol = "📦 "
+display_private = false
+disabled = false
+
+[perl]
+disabled = true
+
+[php]
+disabled = true
+
+[pulumi]
+disabled = true
+
+[purescript]
+disabled = true
+
+[python]
+format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+style = "yellow"
+version_format = "v${raw}"
+symbol = "🐍 "
+pyenv_version_name = false
+pyenv_prefix = "pyenv"
+python_binary = ["python", "python3", "python2"]
+detect_extensions = ["py"]
+detect_files = [".python-version", "Pipfile", "__init__.py", "pyproject.toml", "requirements.txt", "setup.py", "tox.ini"]
+detect_folders = []
+disabled = false
+
+[rlang]
+disabled = true
+
+[red]
+disabled = true
+
+[ruby]
+format = "via [$symbol($version )]($style)"
+style = "red"
+version_format = "v${raw}"
+symbol = "💎 "
+detect_extensions = ["rb"]
+detect_files = ["Gemfile", ".ruby-version"]
+detect_folders = []
+detect_variables = ["RUBY_VERSION", "RBENV_VERSION"]
+disabled = false
+
+[rust]
+disabled = true
+
+[scala]
+disabled = true
+
+[shell]
+disabled = true
+
+[shlvl]
+disabled = true
+
+[singularity]
+disabled = true
+
+[status]
+disabled = true
+
+[swift]
+disabled = true
+
+[terraform]
+disabled = true
+
+[time]
+format = '[$time]($style) '
+style = ""
+time_format = "%T"
+use_12hr = false
+utc_time_offset = "local"
+time_range = "-"
+disabled = false
+
+[username]
+format = "[$user]($style) in "
+style_root = "red"
+style_user = "yellow"
+show_always = false
+disabled = false
+
+[vagrant]
+disabled = true
+
+[vlang]
+disabled = true
+
+[vcsh]
+disabled = true
+
+[zig]
+disabled = true
+
+[custom]
 disabled = true
