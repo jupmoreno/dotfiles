@@ -4,6 +4,9 @@
 
 - clean: ['~']
 
+- create:
+    - ~/.vim
+
 - link:
     ~/.fzf.zsh: shell/fzf.zsh
     ~/.fzf.bash: shell/fzf.bash
@@ -16,6 +19,6 @@
     ~/.gitignore_global: git/gitignore
     ~/.gitconfig: git/gitconfig
     ~/.vimrc: vim/vimrc
-    ~/.vim: vim/vim
+    ~/.vim/autoload: vim/autoload
     ~/.mackup.cfg: mackup/mackup.cfg
     ~/.mackup: mackup/mackup
