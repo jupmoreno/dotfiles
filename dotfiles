@@ -1,24 +1,5 @@
 #!/usr/bin/env bash
-
 set -e -o pipefail
-
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utils/helpers.sh"
-
-if ! (hash brew 2>/dev/null); then
-	info "Installing homebrew..."
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	success "Done"
-fi
-
-if  (( ${BASH_VERSINFO[0]} < 4 )) || (( ${BASH_VERSINFO[0]} == 4 && ${BASH_VERSINFO[1]} < 2 )); then
-	fail "Need to update bash..."
-	brew install bash
-	success "Done. Restart the script..."
-	exit 1
-fi
-
-# shellcheck source=concurrent.lib.sh
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utils/bash-concurrent/concurrent.lib.sh"
 
 check_brew_installed() {
 	if ! (hash brew 2>/dev/null); then
@@ -29,8 +10,8 @@ check_brew_installed() {
 }
 
 check_mas_installed() {
-	check_brew_installed
 	if ! (hash mas 2>/dev/null); then
+		check_brew_installed
 		info "Installing mas..." >&3
 		brew install mas
 		open -a "App Store"
@@ -40,8 +21,8 @@ check_mas_installed() {
 }
 
 check_python_installed() {
-	check_brew_installed
 	if ! (hash pip3 2>/dev/null); then
+		check_brew_installed
 		info "Installing python..." >&3
 		brew install python
 		success "Installed python" >&3
@@ -58,8 +39,8 @@ check_node_installed() {
 }
 
 check_dotbot_installed() {
-	check_python_installed
 	if ! (hash dotbot 2>/dev/null); then
+		check_python_installed
 		info "Installing dotbot..." >&3
 		pip3 install dotbot
 		success "Installed dotbot" >&3
@@ -67,13 +48,23 @@ check_dotbot_installed() {
 }
 
 check_mackup_installed() {
-	check_brew_installed
 	if ! (hash mackup 2>/dev/null); then
+		check_brew_installed
 		info "Installing mackup and drive..." >&3
 		brew install google-drive
 		brew install mackup
 		open -a "Google Drive"
 		fail "Installed mackup and drive. Sign into Google Drive" >&3
+		exit 1
+	fi
+}
+
+check_bash_version() {
+	if  (( ${BASH_VERSINFO[0]} < 4 )) || (( ${BASH_VERSINFO[0]} == 4 && ${BASH_VERSINFO[1]} < 2 )); then
+		check_brew_installed
+		info "Updating bash..."
+		brew install bash
+		fail "Updated bash. Restart the script..."
 		exit 1
 	fi
 }
@@ -173,27 +164,6 @@ link_backups() {
 	success "Done" >&3
 }
 
-declare -A TASKS
-TASKS=(
-	["update-script"]=update_script
-	["update-system"]=update_system
-	["brew-apps"]=install_brew_apps
-	["cask-apps"]=install_cask_apps
-	["store-apps"]=install_store_apps
-	["python-apps"]=install_python_apps
-	["node-apps"]=install_node_apps
-	["fonts"]=install_fonts
-	["links"]=link_files
-	["backups"]=link_backups
-)
-
-TASKS_ORDER=(
-	"update-script update-system"
-	"brew-apps cask-apps store-apps python-apps node-apps fonts"
-	"links"
-	"backups"
-)
-
 run_concurrently() {
 	local args=()
 	local tasks_order_size=${#TASKS_ORDER[@]}
@@ -255,5 +225,33 @@ main() {
 		run_concurrently
 	fi
 }
+
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utils/helpers.sh"
+
+check_bash_version
+
+# shellcheck source=concurrent.lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utils/bash-concurrent/concurrent.lib.sh"
+
+declare -A TASKS
+TASKS=(
+	["update-script"]=update_script
+	["update-system"]=update_system
+	["brew-apps"]=install_brew_apps
+	["cask-apps"]=install_cask_apps
+	["store-apps"]=install_store_apps
+	["python-apps"]=install_python_apps
+	["node-apps"]=install_node_apps
+	["fonts"]=install_fonts
+	["links"]=link_files
+	["backups"]=link_backups
+)
+
+TASKS_ORDER=(
+	"update-script update-system"
+	"brew-apps cask-apps store-apps python-apps node-apps fonts"
+	"links"
+	"backups"
+)
 
 main "${@}"
