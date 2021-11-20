@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e -x
 
 # ---------------------------------------- #
 # START
@@ -30,6 +31,8 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # ---------------------------------------- #
 # GENERAL
 # ---------------------------------------- #
+
+echo "General settings..."
 
 # Automatically show scrollbars
 # defaults write NSGlobalDomain AppleShowScrollBars -string "Automatic"
@@ -63,6 +66,7 @@ defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
 # Disable Resume system-wide
 defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
+defaults write -app "System Preferences" NSQuitAlwaysKeepsWindows -bool false
 
 # Disable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
@@ -102,12 +106,11 @@ defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
 # Disable opening and closing window animations 
 # defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
-# Increase window resize speed for Cocoa applications
-# defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-
 # ---------------------------------------- #
 # KEYBOARD & MOUSE
 # ---------------------------------------- #
+
+echo "Keyboard and mouse settings..."
 
 # Disable automatic capitalization as it’s annoying when typing code
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
@@ -173,12 +176,19 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 # SOUND
 # ---------------------------------------- #
 
+echo "Sound settings..."
+
 # Increase sound quality for Bluetooth headphones/headsets
 defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
 
 # ---------------------------------------- #
 # MENU BAR
 # ---------------------------------------- #
+
+echo "Menu bar settings..."
+
+# Show Day of the week and 24-hour formatted clock in menu bar
+defaults write com.apple.menuextra.clock "DateFormat" -string "EEE dd HH:mm:ss"
 
 # TODO MenuBar items order
 # Menu bar: hide the Time Machine, Volume, and User icons
@@ -203,6 +213,8 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 # ---------------------------------------- #
 # FINDER
 # ---------------------------------------- #
+
+echo "Finder settings..."
 
 # Set sidebar icon size (small: 1, medium: 2, large: 3)
 # defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
@@ -282,9 +294,9 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 # /usr/libexec/PlistBuddy -c "Set DesktopViewSettings:IconViewSettings:labelOnBottom false" ~/Library/Preferences/com.apple.finder.plist
 
 # Enable snap-to-grid for icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
 
 # Increase grid spacing for icons on the desktop and in other icon views
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
@@ -314,13 +326,15 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 # DRIVES
 # ---------------------------------------- #
 
+echo "Drives settings..."
+
 # Disable the sudden motion sensor as it’s not useful for SSDs
-sudo pmset -a sms 0
+# sudo pmset -a sms 0
 
 # Prevent Time Machine from prompting to use new hard drives as backup volume
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 # Disable local Time Machine backups
-hash tmutil &> /dev/null && sudo tmutil disablelocal
+# hash tmutil &> /dev/null && sudo tmutil disablelocal
 
 # Prevent Photos from opening automatically when devices are plugged in
 defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
@@ -328,6 +342,8 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 # ---------------------------------------- #
 # SCREEN
 # ---------------------------------------- #
+
+echo "Screen settings..."
 
 # Change require password after sleep or screen saver begins delay
 defaults write com.apple.screensaver askForPassword -int 1
@@ -343,8 +359,10 @@ sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutio
 # SCREENSHOTS
 # ---------------------------------------- #
 
+echo "Screenshots settings..."
+
 # Save screenshots to Pictures
-mkdir ~/Pictures/Screenshots
+mkdir -p ~/Pictures/Screenshots
 # defaults write com.apple.screencapture location -string "${HOME}/Pictures/Screenshots"
 defaults write com.apple.screencapture location "~/Pictures/Screenshots"
 
@@ -363,6 +381,8 @@ defaults write com.apple.screencapture disable-shadow -bool true
 # ---------------------------------------- #
 # ENERGY SAVING
 # ---------------------------------------- #
+
+echo "Energy saving settings..."
 
 # Enable lid wakeup
 sudo pmset -a lidwake 1
@@ -398,6 +418,8 @@ sudo pmset -a hibernatemode 0
 # ---------------------------------------- #
 # DOCK
 # ---------------------------------------- #
+
+echo "Dock settings..."
 
 # Automatically hide and show the Dock
 defaults write com.apple.dock autohide -bool true
@@ -458,6 +480,8 @@ defaults write com.apple.dock launchanim -bool false
 # MISSION CONTROL
 # ---------------------------------------- #
 
+echo "Mission control settings..."
+
 # Speed up Mission Control animations
 defaults write com.apple.dock expose-animation-duration -float 0.05
 
@@ -509,10 +533,12 @@ defaults write com.apple.dock wvous-br-modifier -int 0
 # SPOTLIGHT
 # ---------------------------------------- #
 
+echo "Spotlight settings..."
+
 # Disable Spotlight indexing for any volume that gets mounted and has not yet
 # been indexed before.
 # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
+# sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
 
 # Change indexing order and disable some search results
 # Yosemite-specific search results (remove them if you are using OS X 10.9 or older):
@@ -556,6 +582,8 @@ sudo mdutil -E / > /dev/null
 # APP STORE & UPDATES
 # ---------------------------------------- #
 
+echo "App store & updates settings..."
+
 # Enable the WebKit Developer Tools in the Mac App Store
 defaults write com.apple.appstore WebKitDeveloperExtras -bool true
 
@@ -586,6 +614,8 @@ defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
 # ---------------------------------------- #
 # SAFARI
 # ---------------------------------------- #
+
+echo "Safari settings..."
 
 # Privacy: don’t send search queries to Apple
 # defaults write com.apple.Safari UniversalSearchEnabled -bool false
@@ -676,6 +706,8 @@ defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 # MAIL
 # ---------------------------------------- #
 
+echo "Mail settings..."
+
 # Disable send and reply animations in Mail.app
 # defaults write com.apple.mail DisableReplyAnimations -bool true
 # defaults write com.apple.mail DisableSendAnimations -bool true
@@ -700,6 +732,8 @@ defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 # ---------------------------------------- #
 # TERMINAL
 # ---------------------------------------- #
+
+echo "Terminal settings..."
 
 # Only use UTF-8 in Terminal.app
 defaults write com.apple.terminal StringEncodings -array 4
@@ -751,10 +785,10 @@ defaults write com.apple.terminal SecureKeyboardEntry -bool true
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
 # ---------------------------------------- #
-
-# ---------------------------------------- #
 # ACTIVITY MONITOR
 # ---------------------------------------- #
+
+echo "Activity monitor settings..."
 
 # Show the main window when launching Activity Monitor
 defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
@@ -773,6 +807,8 @@ defaults write com.apple.ActivityMonitor SortDirection -int 0
 # TEXT EDIT
 # ---------------------------------------- #
 
+echo "Text edit settings..."
+
 # Use plain text mode for new TextEdit documents
 defaults write com.apple.TextEdit RichText -int 0
 
@@ -783,6 +819,8 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 # ---------------------------------------- #
 # MESSAGES
 # ---------------------------------------- #
+
+echo "Messages settings..."
 
 # Disable automatic emoji substitution (i.e. use plain text smileys)
 # defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
@@ -796,6 +834,8 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 # ---------------------------------------- #
 # CHROME
 # ---------------------------------------- #
+
+echo "Chrome settings..."
 
 # Disable the all too sensitive backswipe on trackpads
 # defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
@@ -816,6 +856,8 @@ defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool t
 # ---------------------------------------- #
 # OTHER
 # ---------------------------------------- #
+
+echo "Other settings..."
 
 # Enable the debug menu in Address Book
 defaults write com.apple.addressbook ABShowDebugMenu -bool true
@@ -839,29 +881,4 @@ defaults write com.apple.QuickTimePlayerX MGPlayMovieOnOpen -bool true
 # END
 # ---------------------------------------- #
 
-for app in "Activity Monitor" \
-	"Address Book" \
-	"Calendar" \
-	"cfprefsd" \
-	"Contacts" \
-	"Dock" \
-	"Finder" \
-	"Google Chrome Canary" \
-	"Google Chrome" \
-	"Mail" \
-	"Messages" \
-	"Opera" \
-	"Photos" \
-	"Safari" \
-	"SizeUp" \
-	"Spectacle" \
-	"SystemUIServer" \
-	"Terminal" \
-	"Transmission" \
-	"Tweetbot" \
-	"Twitter" \
-	"iCal"; do
-	killall "${app}" &> /dev/null
-done
-
-echo "Done. Note that some of these changes require a logout/restart to take effect."
+echo "Done. Restart."
