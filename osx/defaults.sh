@@ -9,7 +9,7 @@ echo "Change macOS's defaults?"
 select yn in "Yes" "No"; do
 	case $yn in
 		Yes ) break;;
-		No ) exit;;
+		No )  exit;;
 	esac
 done
 echo ""
@@ -17,7 +17,7 @@ echo "Are you really sure?"
 select yn in "Yes" "No"; do
 	case $yn in
 		Yes ) break;;
-		No ) exit;;
+		No )  exit;;
 	esac
 done
 echo ""
@@ -67,9 +67,8 @@ defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 # /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 
 # Disable Resume system-wide
-# ! Test
 # defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
-# defaults write -app "System Preferences" NSQuitAlwaysKeepsWindows -bool false
+defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -int 0
 
 # Disable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
@@ -107,7 +106,7 @@ defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
 # defaults write NSGlobalDomain NSCloseAlwaysConfirmsChanges -bool true
 
 # Disable opening and closing window animations 
-# defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 # ---------------------------------------- #
 # KEYBOARD & MOUSE
@@ -144,7 +143,7 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a fast keyboard repeat rate (default 2 & 15)
-defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # Enable full keyboard access for all controls (default: 2)
@@ -157,8 +156,7 @@ launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/nul
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
 sudo systemsetup -settimezone "America/Argentina/Buenos_Aires" > /dev/null
 # Set language and text formats
-# Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
-# `Inches`, `en_GB` with `en_US`, and `true` with `false`.
+# Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with `Inches`, `en_GB` with `en_US`, and `true` with `false`.
 defaults write NSGlobalDomain AppleLanguages -array "en-AR" "es-419"
 defaults write NSGlobalDomain AppleLocale -string "en_AR"
 defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
@@ -201,6 +199,10 @@ defaults write com.apple.menuextra.clock "DateFormat" -string "EEE dd HH:mm:ss"
 
 # Hide Siri
 defaults write com.apple.Siri StatusMenuVisible -int 0
+
+# Disable animation when showing menu bar in full screen
+# ~ Test
+defaults write -g NSToolbarFullScreenAnimationDuration -float 0
 
 # TODO MenuBar items order
 # Menu bar: hide the Time Machine, Volume, and User icons
@@ -269,6 +271,9 @@ sudo chflags nohidden /Volumes
 
 # Disable window animations and Get Info animations
 defaults write com.apple.finder DisableAllAnimations -bool true
+
+# Disable opening and closing Quick Look windows animation
+defaults write -g QLPanelAnimationDuration -float 0
 
 # Keep folders on top when sorting by name
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
@@ -595,6 +600,16 @@ sudo mdutil -i on / > /dev/null
 sudo mdutil -E / > /dev/null
 
 # ---------------------------------------- #
+# LAUNCHPAD
+# ---------------------------------------- #
+
+# Disable animation when showing and hiding Launchpad
+defaults write com.apple.dock springboard-show-duration -float 0
+
+# Disable animation when changing pages in Launchpad
+defaults write com.apple.dock springboard-page-duration -float 0
+
+# ---------------------------------------- #
 # APP STORE & UPDATES
 # ---------------------------------------- #
 
@@ -897,4 +912,12 @@ defaults write com.apple.QuickTimePlayerX MGPlayMovieOnOpen -bool true
 # END
 # ---------------------------------------- #
 
-echo "Done. Restart."
+echo "Done."
+echo ""
+echo "Restart now?"
+select yn in "Yes" "No"; do
+	case $yn in
+		Yes ) sudo shutdown -r now;;
+		No )  echo "Don't forget to restart later";;
+	esac
+done
