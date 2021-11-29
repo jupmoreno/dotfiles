@@ -22,4 +22,4 @@
     ~/.vimrc: vim/vimrc
     ~/.vim/autoload: vim/autoload
     ~/.mackup.cfg: mackup/mackup.cfg
-    ~/.mackup: mackup/mackup
+    ~/.mackup: mackup/applications
