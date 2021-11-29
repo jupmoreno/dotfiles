@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e -o pipefail
+
+DOTFILES_DESTINATION="${DOTFILES_DESTINATION:-"~/.dotfiles"}"
+DOTFILES_GIT_REMOTE="${DOTFILES_GIT_REMOTE:-"git@github.com:jupmoreno/dotfiles.git"}"
+
+git clone --recursive ${DOTFILES_GIT_REMOTE} ${DOTFILES_DESTINATION}

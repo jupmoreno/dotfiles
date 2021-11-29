@@ -1,6 +1,12 @@
 # Juan's dotfiles
 A backup of my macOS apps and settings
 
+## Installation
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jupmoreno/dotfiles/master/install)"
+```
+
 ## Usage
 
 ```
