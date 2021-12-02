@@ -17,9 +17,9 @@ A backup of my macOS apps and settings
 ./dotfiles -s
 ./dotfiles --sequential
 
-# Ignore some steps
-./dotfiles -i store-apps,python-apps
-./dotfiles --ignore store-apps,python-apps
+# Exclude some steps
+./dotfiles -e store-apps,python-apps
+./dotfiles --exclude store-apps,python-apps
 
 # Only run some steps
 ./dotfiles -o brew-apps

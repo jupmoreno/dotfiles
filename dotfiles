@@ -50,11 +50,9 @@ check_dotbot_installed() {
 check_mackup_installed() {
 	if ! (hash mackup 2>/dev/null); then
 		check_brew_installed
-		info "Installing mackup and drive..." >&3
-		brew install google-drive
+		info "Installing mackup..." >&3
 		brew install mackup
-		open -a "Google Drive"
-		fail "Installed mackup and drive. Sign into Google Drive" >&3
+		success "Installed mackup" >&3
 		exit 1
 	fi
 }
@@ -204,7 +202,7 @@ main() {
 	while [[ $# -gt 0 ]]; do
 		key="$1" ; shift
 		case $key in
-			-i|--ignore)     readarray -td, IGNORE_TASKS <<<"$1"; shift ;;
+			-e|--exclude)    readarray -td, IGNORE_TASKS <<<"$1"; shift ;;
 			-o|--only)       readarray -td, ONLY_TASKS <<<"$1"; shift ;;
 			-s|--sequential) sequential=true ;;
 			*)               fail "Unknown parameter: $key" ;;

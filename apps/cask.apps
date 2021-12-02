@@ -1,5 +1,7 @@
 cask_args appdir: '/Applications'
 
+tap homebrew/cask-drivers
+
 # System utils
 cask 'bartender'
 #cask 'bettertouchtool'
@@ -46,6 +48,7 @@ cask 'whatsapp'
 cask 'telegram'
 cask 'slack'
 cask 'discord'
+cask 'zoom'
 
 # Developing
 cask 'visual-studio-code'
