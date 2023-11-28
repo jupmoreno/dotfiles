@@ -1,16 +1,14 @@
 cask_args appdir: '/Applications'
 
-tap homebrew/cask-drivers
-
 # System utils
 cask 'bartender'
 #cask 'bettertouchtool'
 cask 'karabiner-elements'
-cask 'alfred'
+#cask 'alfred'
 cask 'itsycal'
 cask 'gas-mask'
-cask 'lumen'
-#cask 'contexts'
+#cask 'lumen'
+cask 'contexts'
 cask 'maccy'
 cask 'meetingbar'
 
@@ -19,19 +17,20 @@ cask 'the-unarchiver'
 cask 'appcleaner'
 cask 'kap'
 cask 'iterm2'
-cask 'virtualbox'
-cask 'virtualbox-extension-pack'
-cask 'unetbootin'
-cask 'vnc-viewer'
-cask 'teamviewer'
+#cask 'virtualbox'
+#cask 'virtualbox-extension-pack'
+#cask 'unetbootin'
+#cask 'vnc-viewer'
+#cask 'teamviewer'
 #cask 'ovito'
-cask 'balenaetcher'
-cask 'android-file-transfer'
+#cask 'balenaetcher'
+#cask 'android-file-transfer'
 
 # Network tools
-cask 'netspot'
-cask 'wireshark'
-cask 'paw'
+#cask 'netspot'
+#cask 'wireshark'
+cask 'rapidapi'
+cask 'postman'
 
 # Devices
 cask 'logitech-options'
@@ -40,14 +39,15 @@ cask 'logitech-options'
 cask '1password'
 
 # Browsers
-cask 'google-chrome'
-cask 'firefox'
+#cask 'google-chrome'
+#cask 'firefox'
+cask 'arc'
 
 # Social
 cask 'whatsapp'
-cask 'telegram'
-cask 'slack'
-cask 'discord'
+#cask 'telegram'
+#cask 'slack'
+#cask 'discord'
 cask 'zoom'
 
 # Developing
@@ -57,28 +57,29 @@ cask 'docker'
 #cask 'unity'
 
 # Media
-cask 'vlc'
+#cask 'vlc'
 cask 'iina'
 cask 'spotify'
-cask 'handbrake'
-cask 'audacity'
-cask 'webtorrent'
+#cask 'handbrake'
+#cask 'audacity'
+#cask 'webtorrent'
 #cask 'sketch'
 
 # Office
 cask 'microsoft-office'
-cask 'calibre'
-cask 'notion'
+#cask 'calibre'
+#cask 'notion'
+cask 'obsidian'
 
 # Gaming
-cask 'steam'
-cask 'battle-net'
-cask 'epic-games'
-cask 'openemu'
-cask 'sony-ps-remote-play'
+#cask 'steam'
+#cask 'battle-net'
+#cask 'epic-games'
+#cask 'openemu'
+#cask 'sony-ps-remote-play'
 
 # Files
-cask 'transmission'
-cask 'cyberduck'
-cask 'google-drive'
-cask 'macdropany'
+#cask 'transmission'
+#cask 'cyberduck'
+#cask 'google-drive'
+#cask 'macdropany'

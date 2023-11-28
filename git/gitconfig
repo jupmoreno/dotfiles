@@ -1,9 +1,16 @@
-[include]
-	path = ~/.gitconfig_local
-
 [user]
-	name = Juan Moreno
-	email = 3160886+jupmoreno@users.noreply.github.com
+    name = Juan Moreno
+    email = 3160886+jupmoreno@users.noreply.github.com
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP5Yn8sXX+BrHSYBUVM0BO0X5NGp0t/J3NR/1OQI20BZ
+
+[gpg]
+    format = ssh
+
+[gpg "ssh"]
+    program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[commit]
+    gpgsign = true
 
 [core]
 	excludesfile = ~/.gitignore_global
@@ -80,6 +87,7 @@
 	remotes = remote --verbose
 	aliases = config --get-regexp alias
 	branches-clean = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+	sign-since = git rebase --exec "git commit --amend --no-edit -n -S" -i $1
 
 [url "git@github.com:"]
 	insteadOf = "gh:"
@@ -96,3 +104,6 @@
 
 [url "git://gist.github.com/"]
 	insteadOf = "gist:"
+
+[include]
+	path = ~/.gitconfig.d/local

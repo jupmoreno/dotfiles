@@ -40,9 +40,9 @@ check_node_installed() {
 
 check_dotbot_installed() {
 	if ! (hash dotbot 2>/dev/null); then
-		check_python_installed
+		check_brew_installed
 		info "Installing dotbot..." >&3
-		pip3 install dotbot
+		brew install dotbot
 		success "Installed dotbot" >&3
 	fi
 }
@@ -70,6 +70,7 @@ check_bash_version() {
 update_script() {
 	info "Updating submodules..." >&3
 	git submodule update --init --recursive
+	git submodule update --remote utils/bash-concurrent
 	success "Done" >&3
 }
 

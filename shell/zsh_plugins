@@ -19,4 +19,5 @@ zinit ice wait lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" lig
     zdharma-continuum/fast-syntax-highlighting
 zinit wait lucid atload'_zsh_autosuggest_start' light-mode for \
     zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 ### End of Zinit plugins

@@ -2,19 +2,21 @@ tap 'jupmoreno/apps'
 
 # Command line
 brew 'bash'
+brew 'bash-preexec'
 brew 'bash-completion@2'
 brew 'zsh'
+brew 'zsh-completions'
 brew 'starship'
 
 # Editors
 brew 'vim'
-#brew 'nano'
+brew 'nano'
 
 # Network tools
-brew 'nmap'
-brew 'netcat'
-brew 'whois'
-brew 'httpstat'
+#brew 'nmap'
+#brew 'netcat'
+#brew 'whois'
+#brew 'httpstat'
 
 # Low level development
 #brew 'binutils'
@@ -23,8 +25,9 @@ brew 'httpstat'
 #brew 'nasm'
 
 # Coding tools
-brew 'infer'
+#brew 'infer'
 brew 'checkstyle'
+brew 'pmd'
 brew 'maven'
 brew 'gradle'
 brew 'ant'
@@ -32,26 +35,33 @@ brew 'make'
 brew 'cmake'
 brew 'jenv'
 brew 'git'
-brew 'git-flow'
 brew 'gh'
 brew 'diff-so-fancy'
 brew 'yuicompressor'
+brew 'terraform'
+brew 'vault'
+
+# Infra Tools
+brew 'kind'
+brew 'helm'
 
 # Package managers
 brew 'mas'
 
 # Tools
-brew 'youtube-dl'
-brew 'you-get'
+#brew 'youtube-dl'
+#brew 'you-get'
 brew 'curl'
 brew 'wget'
 #brew 'httpie'
 brew 'qemu'
 brew 'openssh'
 brew 'htop'
+#brew 'octave'
+
+# Scripting tools
 #brew 'm-cli'
 #brew 'chrome-cli'
-#brew 'octave'
 
 # Services
 #brew 'postgresql'
@@ -72,12 +82,15 @@ brew 'kotlin'
 brew 'rust'
 brew 'python'
 brew 'gcc'
-brew 'java'
+brew 'openjdk'
+brew 'openjdk@8'
+brew 'openjdk@11'
+brew 'openjdk@17'
 
 # Command line tools
-#brew 'fasd'
 brew 'fzf'
-brew 'autojump'
+brew 'atuin'
+brew 'zoxide'
 brew 'thefuck'
 brew 'cheat'
 brew 'howdoi'
@@ -86,6 +99,12 @@ brew 'grep'
 brew 'less'
 brew 'virtualenv'
 brew 'findutils'
+brew 'gpg'
+brew 'pinentry-mac'
+brew 'watch'
+brew 'jq'
+brew 'jid'
+brew 'bat'
 
 # Media
 brew 'ffmpeg'

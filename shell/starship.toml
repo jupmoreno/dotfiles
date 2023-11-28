@@ -1,5 +1,11 @@
+format = """$directory$git_branch$git_commit$git_state$git_metrics$git_status$package$fill$cmd_duration$fill$java$python$kubernetes $aws\n$all"""
+add_newline = true
+
 [aws]
-disabled = true
+disabled = false
+format = '[$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+symbol = '󰸏 '
+style = 'dimmed'
 
 [battery]
 disabled = true
@@ -18,8 +24,8 @@ disabled = true
 disabled = true
 
 [cmd_duration]
-format = "took [$duration]($style) "
-style = ""
+format = "[󰅒 $duration]($style) "
+style = "dimmed"
 min_time = 100
 show_milliseconds = true
 disabled = false
@@ -43,12 +49,12 @@ truncation_length = 3
 truncate_to_repo = true
 read_only = "🔒"
 read_only_style = "red"
-truncation_symbol = ""
+truncation_symbol = "../"
 home_symbol = "~"
 disabled = false
 
 [docker_context]
-disabled = true
+disabled = false
 
 [dotnet]
 disabled = true
@@ -66,15 +72,16 @@ disabled = true
 disabled = true
 
 [fill]
-disabled = true
+disabled = false
+symbol = ' '
 
 [gcloud]
 disabled = true
 
 [git_branch]
 format = "on [$symbol$branch]($style) "
-style = "purple"
-symbol = "🌱 "
+style = "208"
+symbol = "󰊢 "
 always_show_remote = false
 truncation_length = 40
 truncation_symbol = "…"
@@ -104,14 +111,14 @@ format = '([\[$all_status$ahead_behind\]]($style) )'
 style = "red"
 ahead = "⇡${count}"
 behind = "⇣${count}"
-diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+diverged = "⇡${ahead_count}⇣${behind_count}"
 conflicted = "!"
 up_to_date = ""
-untracked = "?"
+untracked = "+"
 stashed = "$"
 modified = "+"
 staged = '[++\($count\)](green)'
-renamed = "»"
+renamed = ""
 deleted = "✘"
 disabled = false
 
@@ -129,13 +136,13 @@ trim_at = "."
 disabled = false
 
 [java]
-format = "via [${symbol}(${version} )]($style)"
-style = "red dimmed"
+format = "[${symbol}]($style bold)[(${version} )]($style)"
+style = "dimmed"
 version_format = "v${raw}"
 detect_extensions = ["java", "class", "gradle", "jar", "cljs", "cljc"]
 detect_files = ["pom.xml", "build.gradle.kts", "build.sbt", ".java-version", ".deps.edn", "project.clj", "build.boot"]
 detect_folders = []
-symbol = "☕ "
+symbol = "󰬷 "
 disabled = false
 
 [jobs]
@@ -153,10 +160,16 @@ disabled = true
 disabled = true
 
 [kubernetes]
-disabled = true
+disabled = false
+format = '[$symbol$context( \($namespace\))]($style)'
+symbol = '󱃾 '
+style = 'dimmed'
+[kubernetes.context_aliases]
+'arn:aws:eks:us-west-2:232445805708:cluster/sam-processing1' = 'falcon-test'
+'arn:aws:eks:us-west-2:401543163213:cluster/sam-processing1' = 'falcon-dev'
 
 [line_break]
-disabled = false
+disabled = true
 
 [lua]
 disabled = true
@@ -174,7 +187,7 @@ disabled = true
 disabled = true
 
 [nodejs]
-format = "via [$symbol($version)]($style)"
+format = "[$symbol($version)]($style)"
 style = "green"
 version_format = "v${raw}"
 not_capable_style = "red"
@@ -193,9 +206,9 @@ disabled = true
 format = "is [$symbol$version]($style) "
 style = "208"
 version_format = "v${raw}"
-symbol = "📦 "
+symbol = "󰏖 "
 display_private = false
-disabled = false
+disabled = true
 
 [perl]
 disabled = true
@@ -210,10 +223,10 @@ disabled = true
 disabled = true
 
 [python]
-format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
-style = "yellow"
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+style = "dimmed"
 version_format = "v${raw}"
-symbol = "🐍 "
+symbol = "󰌠 "
 pyenv_version_name = false
 pyenv_prefix = "pyenv"
 python_binary = ["python", "python3", "python2"]
@@ -229,15 +242,7 @@ disabled = true
 disabled = true
 
 [ruby]
-format = "via [$symbol($version )]($style)"
-style = "red"
-version_format = "v${raw}"
-symbol = "💎 "
-detect_extensions = ["rb"]
-detect_files = ["Gemfile", ".ruby-version"]
-detect_folders = []
-detect_variables = ["RUBY_VERSION", "RBENV_VERSION"]
-disabled = false
+disabled = true
 
 [rust]
 disabled = true
@@ -292,4 +297,4 @@ disabled = true
 disabled = true
 
 [custom]
-disabled = true
+#disabled = true
