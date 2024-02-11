@@ -1,0 +1,422 @@
+#!/usr/bin/env bash
+set -e -o pipefail
+
+main() {
+  parse_arguments "$@"
+  validate_arguments
+  configure_falcon
+  execute_action
+}
+
+parse_arguments() {
+  TEAM=ms-cfm-ocs
+  CONFIGURE_CREDENTIALS=true
+  VERBOSE=false
+
+  while [[ $# -gt 0 ]]; do
+    key="$1"; shift
+    case $key in
+      -e|--environment) ENVIRONMENT="$1"; shift;;
+      -s|--service) SERVICE="$1"; shift;;
+      -a|--action) ACTION="$1"; shift;;
+      -t|--team) TEAM="$1"; shift;;
+      --skip-credentials) CONFIGURE_CREDENTIALS=false;;
+      -v|--verbose) VERBOSE=true;;
+      -h|--help) show_help; exit 0;;
+      -*|--*) fail "Unknown option $key"; show_help; exit 1;;
+      *) fail "Unknown argument $key"; show_help; exit 1;;
+    esac
+  done
+
+  if [[ -n "${SERVICE_ALIASES[$SERVICE]}" ]]; then SERVICE=${SERVICE_ALIASES[$SERVICE]}; fi
+}
+
+validate_arguments() {
+  if [[ -z "${ENVIRONMENT}" ]]; then fail "Missing environment"; exit 1; fi
+  if [[ ! " ${VALID_ENVIRONMENTS[*]} " =~ " ${ENVIRONMENT} " ]]; then fail "Invalid environment $ENVIRONMENT"; exit 1; fi
+
+  if [[ -z "${SERVICE}" ]]; then fail "Missing service"; exit 1; fi
+
+  if [[ -z "${TEAM}" ]]; then fail "Missing team"; exit 1; fi
+
+  if [[ -z "${ACTION}" ]]; then fail "Missing action"; exit 1; fi
+}
+
+execute_action() {
+  case $ACTION in
+    deployment|deploy) deploy;;
+    provision) provision;;
+    vault) connect_vault secrets;;
+    fit-vault|fitvault|fvault) connect_vault $SERVICE-$TEAM;;
+    read-secrets:*|readsecrets:*|rsecrets:*) show_secrets secrets/armadasecret ${ACTION#*:};;
+    read-secrets|readsecrets|rsecrets) show_secrets secrets/armadasecret;;
+    write-secrets|writesecrets|wsecrets) write_secrets secrets/armadasecret;;
+    read-fit-secrets:*|readfitsecrets:*|rfsecrets:*) show_secrets $SERVICE-$TEAM/fitsecret ${ACTION#*:};;
+    read-fit-secrets|readfitsecrets|rfsecrets) show_secrets $SERVICE-$TEAM/fitsecret;;
+    write-fit-secrets|writefitsecrets|wfsecrets) write_secrets $SERVICE-$TEAM/fitsecret data;;
+    *) fail "Invalid action $ACTION"; exit 1;;
+  esac
+}
+
+deploy() {
+  if [[ ! " ${DEPLOYABLE_ENVIRONMENTS[*]} " =~ " ${ENVIRONMENT} " ]]; then
+    fail "Deploy to the '$ENVIRONMENT' environment is forbiden";
+    exit 1;
+  fi
+
+  run_command falcon release latest --service-team $TEAM --service-type $SERVICE \
+    --target-selector "falconInstance=$FALCON_INSTANCE,functionalDomain=$FUNCTIONAL_DOMAIN"
+}
+
+provision() {
+  run_command falcon release latest --provision --service-team $TEAM --service-type $SERVICE \
+    --target-selector "falconInstance=$FALCON_INSTANCE,functionalDomain=$FUNCTIONAL_DOMAIN"
+}
+
+connect_vault() {
+  local subpath=$1
+
+  if [[($CONFIGURE_CREDENTIALS = "true")]]; then configure_aws; fi
+
+  run_command $VAULTLS_COMMAND -inst $FALCON_INSTANCE -root kv/$SERVICE-$FALCON_INSTANCE-$FUNCTIONAL_DOMAIN -sub $subpath;
+}
+
+show_secrets() {
+  local subpath=$1
+  local version=$2
+
+  read_secrets $subpath $version
+
+  echo "$OG_SECRETS_PARSED"
+}
+
+read_secrets() {
+  local subpath=$1
+  local version=$2
+
+  configure_vault $subpath
+  if [[ -n "$version" ]]; then version="-version=$version"; fi
+
+  set +e
+
+  OG_SECRETS=$(run_command vault kv get -format "json" -field "data" $version $VAULT_FULL_PATH)
+  if [[ $? != 0 ]]; then
+    fail "Failed to get secret"
+    user "Are you trying to create it? Select option number:"
+    select yn in "Yes" "No"; do
+      case $yn in
+        Yes )
+          OG_SECRETS="{}"
+          break;;
+        No )
+          exit 1;;
+      esac
+    done
+  fi
+
+  OG_SECRETS_PARSED=$(printf '%s' "$OG_SECRETS" | jq --sort-keys -r .)
+  if [[ $? != 0 ]]; then fail "Failed to parse secret:\n$OG_SECRETS"; exit 1; fi
+
+  set -e
+}
+
+write_secrets() {
+  local subpath=$1
+  local field=$2
+
+  read_secrets $subpath
+  if [[ -n "$field" ]]; then field="$field="; fi
+
+  set +e
+
+  echo "$OG_SECRETS_PARSED" >> $TMPFILE
+  user "Using '$EDITOR' (configured using the \$EDITOR variable) to edit the secrets... Come back once you finished editing them"
+  $EDITOR $TMPFILE
+  NEW_SECRETS_PARSED=$(jq --sort-keys . $TMPFILE)
+  if [[ $? != 0 ]]; then fail "Failed to parse new secret:"; cat $TMPFILE; exit 1; fi
+
+  SECRETS_DIFF=$(diff <(echo "$OG_SECRETS_PARSED") <(echo "$NEW_SECRETS_PARSED"))
+  if [[ $? == 0 ]]; then success "No changes..."; return; fi
+
+  set -e
+
+  user "Differences:"
+  echo "$SECRETS_DIFF"
+  user "Apply changes? Select option number:"
+  select yn in "Yes" "No"; do
+    case $yn in
+      Yes )
+        run_command vault kv put $VAULT_FULL_PATH $field@$TMPFILE > /dev/null;
+        success "Applied:"
+        run_command vault kv get -format "json" -field "data" $VAULT_FULL_PATH | jq -r --sort-keys .
+        exit 0;;
+      No )
+        exit 0;;
+    esac
+  done
+}
+
+show_help() {
+  echo "falconw"
+  echo -e "  (-e|--environment <environment>) (Required) selects the environment. One of: dev, test, stage."
+  echo -e "  (-s|--service <service_name>)    (Required) selects the service."
+  echo -e "  (-a|--action <action>)           (Required) selects the action. One of: provision, deployment, vault, fit-vault,"
+  echo -e "                                   read-secrets[:version], write-secrets, read-fit-secrets[:version], write-fit-secrets."
+  echo -e "  [-t|--team <team_name>]          [Optional] selects the team. Default: ms-cfm-ocs."
+  echo -e "  [--skip-credentials]             [Optional] skips the AWS credentials configuration. Default: don't skip."
+  echo -e "  [-h|--help]                      shows this help message."
+}
+
+configure_falcon() {
+  FALCON_INSTANCE=${FALCON_INSTANCES[$ENVIRONMENT]}
+  FUNCTIONAL_DOMAIN=${FUNCTIONAL_DOMAINS[$ENVIRONMENT]}
+
+  if [[ "$VERBOSE" == "true" ]]; then
+    echo " -------------------------------------"
+    echo "| Falcon"
+    echo " -------------------------------------"
+    echo "| Team: $TEAM"
+    echo "| Service: $SERVICE"
+    echo "| Environment: $ENVIRONMENT (fi: $FALCON_INSTANCE, fd: $FUNCTIONAL_DOMAIN)"
+    echo "| Action: $ACTION"
+    echo " -------------------------------------"
+  fi
+}
+
+configure_vault() {
+  AWS_REGION=us-east-1
+  export VAULT_ADDR=https://api.vault.secrets.$FALCON_INSTANCE.aws.sfdc.cl
+  VAULT_LOGIN_HEADER="api.vault.secrets.$FALCON_INSTANCE.aws.sfdc.cl"
+  VAULT_ROOT_PATH="kv/$SERVICE-$FALCON_INSTANCE-$FUNCTIONAL_DOMAIN"
+  VAULT_FULL_PATH=$VAULT_ROOT_PATH/$1
+  VAULT_ROLE="${VAULT_ROOT_PATH//\//_}-rw"
+
+  set +e
+  VAULT_TOKEN=$(run_command vault login \
+    -token-only -address=$VAULT_ADDR -method=aws header_value=$VAULT_LOGIN_HEADER role=$VAULT_ROLE)
+  if [[ $? != 0 ]]; then
+    echo "Failed to get token"
+    if [[($CONFIGURE_CREDENTIALS = "true")]]; then
+      echo "Configuring AWS..."
+      configure_aws;
+      VAULT_TOKEN=$(run_command vault login \
+        -token-only -address=$VAULT_ADDR -method=aws header_value=$VAULT_LOGIN_HEADER role=$VAULT_ROLE)
+      if [[ $? != 0 ]]; then echo "Failed to get token again."; exit 1; fi
+    else
+      exit 1;
+    fi
+  fi
+  set -e
+  export VAULT_TOKEN=$VAULT_TOKEN
+
+  TMPFILE=$(mktemp)
+  trap 'rm -- "$TMPFILE"' EXIT
+
+  if [[ "$VERBOSE" == "true" ]]; then
+    echo " -------------------------------------"
+    echo "| Vault"
+    echo " -------------------------------------"
+    echo "| Address: $VAULT_ADDR"
+    echo "| Role: $VAULT_ROLE"
+    echo "| Path: $VAULT_FULL_PATH"
+    echo "| Temp file: $TMPFILE"
+    echo " -------------------------------------"
+  fi
+}
+
+configure_aws() {
+  AWS_ACCOUNT=${AWS_ACCOUNTS[$ENVIRONMENT]}
+  if [[ -z "${AWS_ACCOUNT}" ]]; then echo "Missing AWS account to configure credentials"; exit 1; fi
+
+  if [[ "$VERBOSE" == "true" ]]; then
+    echo " -------------------------------------"
+    echo "| AWS"
+    echo " -------------------------------------"
+    echo "| Account: $AWS_ACCOUNT"
+    echo " -------------------------------------"
+  fi
+
+  # Check if already authorized
+  if [[ $(run_command aws sts get-caller-identity | grep "\"Account\": \"$AWS_ACCOUNT\"") ]]; then
+    return
+  fi
+
+  if [[ " ${HIGHER_ENVIRONMENTS[*]} " =~ " ${ENVIRONMENT} " ]]; then
+    echo "Go to https://dashboard.prodga.aws.jit.sfdc.sh/ and manually export the credentials"
+    exit 1
+  fi
+
+  unset AWS_ACCESS_KEY_ID
+  unset AWS_SECRET_ACCESS_KEY
+  unset AWS_SESSION_TOKEN
+  run_command falcon credentials config --account $AWS_ACCOUNT
+  # TODO: Do falcon credentials request if failed?
+}
+
+run_command() {
+  if [[ "$VERBOSE" == "true" ]]; then echo "|> ${@}" >&2; fi
+  "${@}"
+  return $?
+}
+
+check_brew_installed() {
+	if ! (hash brew 2>/dev/null); then
+		echo "Installing homebrew..."
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		echo "Done"
+	fi
+}
+
+check_bash_version() {
+	if  (( ${BASH_VERSINFO[0]} < 4 )) || (( ${BASH_VERSINFO[0]} == 4 && ${BASH_VERSINFO[1]} < 2 )); then
+		check_brew_installed
+		echo "Updating bash..."
+		brew install bash
+		echo "Updated bash. Restart the script..."
+		exit 1
+	fi
+}
+
+check_falcon_installed() {
+  if ! (hash falcon 2>/dev/null); then
+    check_brew_installed
+		echo "Installing falcon..."
+    brew tap sfdc-falcon/cli git@git.soma.salesforce.com:sfdc-falcon/homebrew-cli.git
+    brew install falcon-cli
+		echo "Done"
+	fi
+}
+
+check_vault_installed() {
+  if ! (hash vault 2>/dev/null); then
+    check_brew_installed
+		echo "Installing vault..."
+    brew install vault
+		echo "Done"
+	fi
+}
+
+check_vaultls_installed() {
+  # TODO: Download vault-ls command, use default location as default VAULTLS_COMMAND value
+  if ! (hash $VAULTLS_COMMAND 2>/dev/null); then
+		echo "'$VAULTLS_COMMAND' command should be in the \$PATH..."
+    exit 1
+	fi
+}
+
+check_vault_certificates_installed() {
+  # TODO: It's probably different for Prod, right?
+  # TODO: Download certificates
+  if [[ -z "${VAULT_CACERT}" ]]; then
+    echo "Missing \$VAULT_CACERT environment variable with vault certificate";
+    exit 1;
+  fi
+}
+
+function info() {
+	printf '\033[0;34m'"$1\n"'\033[0m'
+}
+
+function user() {
+	printf '\033[0;33m'"$1\n"'\033[0m'
+}
+
+function success() {
+	printf '\033[0;32m'"$1\n"'\033[0m'
+}
+
+function fail() {
+	printf '\033[0;31m'"$1\n"'\033[0m'
+}
+
+check_bash_version
+
+declare -A SERVICE_ALIASES
+SERVICE_ALIASES=(
+  # Admin API Service
+  ["cfm-admin-api"]="cfm-admin-api-service"
+  ["admin-api-service"]="cfm-admin-api-service"
+  ["admin-api"]="cfm-admin-api-service"
+  # Config Manager Service
+  ["cfm-configuration-manager"]="cfm-configuration-manager-service"
+  ["configuration-manager-service"]="cfm-configuration-manager-service"
+  ["configuration-manager"]="cfm-configuration-manager-service"
+  ["config-manager-service"]="cfm-configuration-manager-service"
+  ["config-manager"]="cfm-configuration-manager-service"
+  # Config Manager DB
+  ["configuration-manager-db-migrations"]="cfm-configuration-manager-db-migrations"
+  ["cfm-configuration-manager-db"]="cfm-configuration-manager-db-migrations"
+  ["configuration-manager-db"]="cfm-configuration-manager-db-migrations"
+  ["config-manager-db"]="cfm-configuration-manager-db-migrations"
+  # Publisher Job
+  ["cfm-configuration-schemas-publisher"]="cfm-configuration-schemas-publisher-job"
+  ["configuration-schemas-publisher-job"]="cfm-configuration-schemas-publisher-job"
+  ["schemas-publisher-job"]="cfm-configuration-schemas-publisher-job"
+  ["schemas-publisher"]="cfm-configuration-schemas-publisher-job"
+  ["publisher-job"]="cfm-configuration-schemas-publisher-job"
+  ["publisher"]="cfm-configuration-schemas-publisher-job"
+  # Connectiviy Service
+  ["cfm-connectivity-service"]="cfm-connectivity-service"
+  ["cfm-connectivity"]="cfm-connectivity-service"
+  ["connectivity-service"]="cfm-connectivity-service"
+  ["connectivity"]="cfm-connectivity-service"
+  # Secrets Migration Job
+  ["cfm-secrets-migration"]="cfm-secrets-migration-job"
+  ["secrets-migration-job"]="cfm-secrets-migration-job"
+  ["secrets-migration"]="cfm-secrets-migration-job"
+  # Authorization Service
+  ["ocs-authorization"]="ocs-authorization-service"
+  ["authorization-service"]="ocs-authorization-service"
+  ["authorization"]="ocs-authorization-service"
+  # Connections Service
+  ["ocs-connections"]="ocs-connections-service"
+  ["connections-service"]="ocs-connections-service"
+  ["connections"]="ocs-connections-service"
+  # Storage Service
+  ["ocs-storage"]="ocs-storage-service"
+  ["storage-service"]="ocs-storage-service"
+  ["storage"]="ocs-storage-service"
+  # Storage DB
+  ["storage-db-migrations"]="ocs-storage-db-migrations"
+  ["ocs-storage-db"]="ocs-storage-db-migrations"
+  ["storage-db"]="ocs-storage-db-migrations"
+)
+
+declare -A FALCON_INSTANCES
+FALCON_INSTANCES=(
+  ["dev"]="aws-dev4-uswest2"
+  ["test"]="test1-uswest2"
+  ["stage"]="aws-stage1-useast2"
+  ["prod"]="aws-prod8-cacentral1"
+)
+
+declare -A FUNCTIONAL_DOMAINS
+FUNCTIONAL_DOMAINS=(
+  ["dev"]="mulesoft-cp"
+  ["test"]="mulesoft-cp2"
+  ["stage"]="mulesoft-cp"
+  ["prod"]="mulesoft-cp"
+)
+
+declare -A AWS_ACCOUNTS
+AWS_ACCOUNTS=(
+  ["dev"]="151436499099"
+  ["test"]="772445165935"
+  ["stage"]="000794127450"
+  ["prod"]="415612909997"
+)
+
+VALID_ENVIRONMENTS=("dev" "test" "stage" "prod")
+LOWER_ENVIRONMENTS=("dev" "test")
+HIGHER_ENVIRONMENTS=("stage" "prod")
+DEPLOYABLE_ENVIRONMENTS=("dev" "test" "stage")
+
+VAULTLS_COMMAND=${VAULTLS_COMMAND:-vault-ls}
+EDITOR=${EDITOR:-vim}
+
+check_falcon_installed
+check_vault_installed
+check_vaultls_installed
+check_vault_certificates_installed
+
+main "${@}"

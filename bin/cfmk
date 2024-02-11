@@ -1,0 +1,589 @@
+#!/bin/bash
+############################################################
+# Help                                                     #
+############################################################
+
+help()
+{
+   # Display Help
+   echo "#########################################################################################################"
+   echo "CFM Kube Tools"
+   echo "Syntax: [-h|e|r|c] [command]"
+   echo
+   echo "options"
+   echo "======="
+   echo
+   echo "h     Help:        Print this Help."
+   echo
+   echo "e     Environment: Sets the default Read-Only ROLE for the given Environment."
+   echo "                   Supported ENVs are (kdev|kqa|kstg|kprod-eu|kprod)."
+   echo "                   Default is 'kqa'"
+   echo
+   echo "r     Role:        Sets the ROLE with the given value."
+   echo "                   Default is 'ro-kqa'"
+   echo
+   echo "c     Cluster:     Sets the CLUSTER with the given value."
+   echo "                   Default is 'eks-us-east-1'"
+   echo
+   echo "commands"
+   echo "========"
+   echo
+   echo "help                                          Print this Help."
+   echo
+   echo "login                                         Login to the Kubernetes Cluster."
+   echo
+   echo "listVersions                                  Log the versions of deployed CFM and OCS pods."
+   echo
+   helpPortForward
+   echo
+   helpPortForwardDb
+   echo
+   helpDebugForward
+   echo "#########################################################################################################"
+}
+
+helpPortForward(){
+   echo "portForward   [namespace] [podName] [port]    Port Forwards to a CFM or OCS Service."
+   echo "   (required) namespace     supported values are (cfm|ocs|secrets-manager|mds|exchange)"
+   echo "   (required) podName       supported values for cfm namespace are (config-manager|connectivity|admin-api)"
+   echo "                            supported values for ocs namespace are (authorization|connections|storage)"
+   echo "                            supported values for secrets-manager namespace are (server-api|server-provider)"
+   echo "                            supported values for mds namespace are (orchestrator)"
+   echo "                            supported values for exchange namespace are (tooling)"
+   echo "   (optional) port          numeric value within port range"
+}
+
+helpPortForwardDb(){
+   echo "portForwardDb [namespace] [port]              Port Forwards to the CFM or OCS Database Proxy."
+   echo "   (required) namespace     supported values are (cfm|ocs)"
+   echo "   (optional) port          numeric value within port range"
+}
+
+helpDebugForward(){
+   echo "debugForward  [namespace] [podName]           Port Forwards to the dependencies of a CFM or OCS Service."
+   echo "   (required) namespace     supported values are (cfm|ocs)"
+   echo "   (required) podName       supported values for cfm namespace are (config-manager|connectivity|admin-api)"
+   echo "                            supported values for ocs namespace are (authorization|connections|storage)"
+}
+
+############################################################
+# Login & Connectivity                                     #
+############################################################
+
+login()
+{
+   echo "Login To (CLUSTER: $CLUSTER, ROLE: $ROLE)"
+   tele login $CLUSTER --role=$ROLE
+}
+
+testKubectlConnectivity()
+{
+   echo "Checking Connectivity To (CLUSTER: $CLUSTER, ROLE: $ROLE)"
+   local NAMESPACE="cfm"
+   kubectl get namespace $NAMESPACE | grep -v ".*"
+}
+
+############################################################
+# Utility                                                  #
+############################################################
+
+runMultipleCommands()
+{
+   local COMPLETE_COMMAND=""
+
+   for COMMAND_I in "$@"
+   do
+      COMPLETE_COMMAND="$COMMAND_I & $COMPLETE_COMMAND"
+   done
+
+   COMPLETE_COMMAND="$COMPLETE_COMMAND wait"
+   sh -c "$COMPLETE_COMMAND"
+}
+
+############################################################
+# Pod Versions                                             #
+############################################################
+
+listNamespacePodVersions()
+{
+   local NAMESPACE=$1
+   echo "List Pod Versions of (NAMESPACE: $NAMESPACE)"
+   kubectl describe pod -n $NAMESPACE | grep "Image:" | egrep -o "$NAMESPACE-.*" | sort -u
+}
+
+############################################################
+# Port Forward                                             #
+############################################################
+
+runPortForwardPod()
+{
+   local NAMESPACE=$1
+   local PODNAME=$2
+   local PORT=$3
+   local PODPORT=$4
+   echo "Port Forward (NAMESPACE: $NAMESPACE, PODNAME: $PODNAME, PORT: $PORT, PODPORT: $PODPORT)"
+   local COMMAND=$(createPortForwardPodCommand $NAMESPACE $PODNAME $PORT $PODPORT)
+   sh -c "$COMMAND"
+}
+
+createPortForwardPodCommand()
+{
+   local NAMESPACE=$1
+   local PODNAME=$2
+   local PORT=$3
+   local PODPORT=$4
+   echo "kubectl -n $NAMESPACE port-forward $(kubectl -n $NAMESPACE get pods | grep "^$PODNAME" | grep -m1 "" | cut -d' ' -f 1) $PORT:$PODPORT"
+}
+
+createPortForwardServiceCommand()
+{
+   local INPUT_NAMESPACE=$1
+   local INPUT_PODNAME=$2
+   local INPUT_PORT=$3
+
+   local EFFECTIVE_NAMESPACE=$(defineNamespaceFromInput $INPUT_NAMESPACE)
+   local EFFECTIVE_PODNAME=$(definePodNameFromInput $EFFECTIVE_NAMESPACE $INPUT_PODNAME)
+   local EFFECTIVE_PORT=$(definePortFromInput $EFFECTIVE_PODNAME $INPUT_PORT)
+   local EFFECTIVE_PODPORT=$(defineServicePodPortFromInput $EFFECTIVE_NAMESPACE)
+
+   echo $(createPortForwardPodCommand $EFFECTIVE_NAMESPACE $EFFECTIVE_PODNAME $EFFECTIVE_PORT $EFFECTIVE_PODPORT)
+}
+
+createPortForwardDbCommand()
+{
+   local INPUT_NAMESPACE=$1
+   local INPUT_PORT=$2
+
+   local EFFECTIVE_PODPORT=$(defineDbPodPortFromInput $INPUT_NAMESPACE)
+   local EFFECTIVE_PORT="${INPUT_PORT:-${EFFECTIVE_PODPORT}}"
+   local EFFECTIVE_NAMESPACE="ocs" # The database proxy is running in the OCS namespace and is configured to forward to databases of both CFM and OCS.
+   local EFFECTIVE_PODNAME="magic-reverse-proxy"
+
+   createPortForwardPodCommand $EFFECTIVE_NAMESPACE $EFFECTIVE_PODNAME $EFFECTIVE_PORT $EFFECTIVE_PODPORT
+}
+
+runMultiplePortForwards()
+{
+   local COMMANDS=()
+
+   for PORT_FORWARD_OPTION in "$@"
+   do
+      local NAMESPACE_OPTION="$(echo $PORT_FORWARD_OPTION | cut -d '#' -f1)"
+      local PODNAME_OPTION="$(echo $PORT_FORWARD_OPTION | cut -d '#' -f2)"
+
+      if [ "$PODNAME_OPTION" == "db" ]; then
+         echo "[Debug Forward Service] - Port Forward Dependency DB (NAMESPACE: $NAMESPACE_OPTION)"
+         local COMMAND=$(createPortForwardDbCommand $NAMESPACE_OPTION)
+      else
+         echo "[Debug Forward Service] - Port Forward Dependency Service (NAMESPACE: $NAMESPACE_OPTION, PODNAME: $PODNAME_OPTION)"
+         local COMMAND=$(createPortForwardServiceCommand $NAMESPACE_OPTION $PODNAME_OPTION)
+      fi
+
+      COMMANDS+=("$COMMAND")
+   done
+
+   runMultipleCommands "${COMMANDS[@]}"
+}
+
+############################################################
+# Input                                                    #
+############################################################
+
+defineNamespaceFromInput()
+{
+   local INPUT_NAMESPACE=$1
+
+   shopt -s nocasematch # Setting case string comparison to case insensitive
+   case $INPUT_NAMESPACE in
+      cfm)
+         local EFFECTIVE_NAMESPACE="cfm"
+         ;;
+      ocs)
+         local EFFECTIVE_NAMESPACE="ocs"
+         ;;
+      secrets-manager)
+         local EFFECTIVE_NAMESPACE="secrets-manager"
+         ;;
+      exchange)
+         local EFFECTIVE_NAMESPACE="exchange"
+         ;;
+      mds)
+         local EFFECTIVE_NAMESPACE="mds"
+         ;;
+      *) # Invalid namespace
+         echo "Error:InvalidNamespace"
+         exit 1
+         ;;
+   esac
+   shopt -u nocasematch # Setting case string comparison back to case sensitive
+
+   echo $EFFECTIVE_NAMESPACE
+}
+
+definePodNameFromInput()
+{
+   local NAMESPACE=$1
+   local INPUT_PODNAME=$2
+
+   shopt -s nocasematch # Setting case string comparison to case insensitive
+   case $NAMESPACE in
+      cfm)
+         case $INPUT_PODNAME in
+            configManager | config-manager)
+               local EFFECTIVE_PODNAME="configuration-manager-service"
+               ;;
+            connectivity)
+               local EFFECTIVE_PODNAME="connectivity-service"
+               ;;
+            adminApi | admin-api)
+               local EFFECTIVE_PODNAME="admin-api-service"
+               ;;
+            *) # Invalid podname
+               echo "Error:InvalidPodname"
+               exit 1
+               ;;
+         esac
+         ;;
+      ocs)
+         case $INPUT_PODNAME in
+            authorization)
+               local EFFECTIVE_PODNAME="authorization-service"
+               ;;
+            connections)
+               local EFFECTIVE_PODNAME="connections-service"
+               ;;
+            storage)
+               local EFFECTIVE_PODNAME="storage-service"
+               ;;
+            *) # Invalid podname
+               echo "Error:InvalidPodname"
+               exit 1
+               ;;
+         esac
+         ;;
+      secrets-manager)
+         case $INPUT_PODNAME in
+            serverProvider | server-provider)
+               local EFFECTIVE_PODNAME="server-provider"
+               ;;
+            serverApi | server-api)
+               local EFFECTIVE_PODNAME="server-api"
+               ;;
+            *) # Invalid podname
+               echo "Error:InvalidPodname"
+               exit 1
+               ;;
+         esac
+         ;;
+      exchange)
+         case $INPUT_PODNAME in
+            tooling)
+               local EFFECTIVE_PODNAME="tooling-service"
+               ;;
+            *) # Invalid podname
+               echo "Error:InvalidPodname"
+               exit 1
+               ;;
+         esac
+         ;;
+      mds)
+         case $INPUT_PODNAME in
+            orchestrator)
+               local EFFECTIVE_PODNAME="orchestrator-service"
+               ;;
+            *) # Invalid podname
+               echo "Error:InvalidPodname"
+               exit 1
+               ;;
+         esac
+         ;;
+      *) # Invalid namespace
+         echo "Error:InvalidNamespace"
+         exit 1
+         ;;
+   esac
+   shopt -u nocasematch # Setting case string comparison back to case sensitive
+
+   echo $EFFECTIVE_PODNAME
+}
+
+definePortFromInput()
+{
+   local PODNAME=$1
+   local INPUT_PORT=$2
+
+   if [ -z "$INPUT_PORT" ]; then
+      case $PODNAME in
+         configuration-manager-service)
+            local EFFECTIVE_PORT=9021
+            ;;
+         connectivity-service)
+            local EFFECTIVE_PORT=9020
+            ;;
+         admin-api-service)
+            local EFFECTIVE_PORT=9019
+            ;;
+         authorization-service)
+            local EFFECTIVE_PORT=8020
+            ;;
+         connections-service)
+            local EFFECTIVE_PORT=8030
+            ;;
+         storage-service)
+            local EFFECTIVE_PORT=8021
+            ;;
+         server-provider)
+            local EFFECTIVE_PORT=8444
+            ;;
+         server-api)
+            local EFFECTIVE_PORT=8443
+            ;;
+         tooling-service)
+            local EFFECTIVE_PORT=9024
+            ;;
+         orchestrator-service)
+            local EFFECTIVE_PORT=9022
+            ;;
+         *) # Invalid podname
+            echo "Error:InvalidPodname"
+            exit 1
+            ;;
+      esac
+   else
+      local EFFECTIVE_PORT=$INPUT_PORT
+   fi
+
+   echo $EFFECTIVE_PORT
+}
+
+defineDbPodPortFromInput()
+{
+   local NAMESPACE=$1
+
+   shopt -s nocasematch # Setting case string comparison to case insensitive
+   case $NAMESPACE in
+      cfm)
+         local EFFECTIVE_PODPORT=3001
+         ;;
+      ocs)
+         local EFFECTIVE_PODPORT=3000
+         ;;
+      *) # Invalid namespace
+         echo "Error:InvalidNamespace"
+         exit 1
+         ;;
+   esac
+   shopt -u nocasematch # Setting case string comparison back to case sensitive
+
+   echo $EFFECTIVE_PODPORT
+}
+
+defineServicePodPortFromInput()
+{
+   local NAMESPACE=$1
+
+   shopt -s nocasematch # Setting case string comparison to case insensitive
+   case $NAMESPACE in
+      cfm | ocs | mds | exchange)
+         local EFFECTIVE_PODPORT=8080
+         ;;
+      secrets-manager)
+         local EFFECTIVE_PODPORT=8443
+         ;;
+      *) # Invalid namespace
+         echo "Error:InvalidNamespace"
+         exit 1
+         ;;
+   esac
+   shopt -u nocasematch # Setting case string comparison back to case sensitive
+
+   echo $EFFECTIVE_PODPORT
+}
+
+############################################################
+# Entry Point Functions                                    #
+############################################################
+
+loginAndCheck()
+{
+   login
+   testKubectlConnectivity
+}
+
+listAllPodVersions()
+{
+   listNamespacePodVersions "cfm"
+   listNamespacePodVersions "ocs"
+}
+
+portForwardService()
+{
+   local INPUT_NAMESPACE=$1
+   local INPUT_PODNAME=$2
+   local INPUT_PORT=$3
+
+   local EFFECTIVE_NAMESPACE=$(defineNamespaceFromInput $INPUT_NAMESPACE)
+   local EFFECTIVE_PODNAME=$(definePodNameFromInput $EFFECTIVE_NAMESPACE $INPUT_PODNAME)
+   local EFFECTIVE_PORT=$(definePortFromInput $EFFECTIVE_PODNAME $INPUT_PORT)
+   local EFFECTIVE_PODPORT=$(defineServicePodPortFromInput $EFFECTIVE_NAMESPACE)
+
+   echo "[Port Forward Service] - (NAMESPACE: $EFFECTIVE_NAMESPACE, PODNAME: $EFFECTIVE_PODNAME, PORT: $EFFECTIVE_PORT, PODPORT: $EFFECTIVE_PODPORT)"
+   runPortForwardPod $EFFECTIVE_NAMESPACE $EFFECTIVE_PODNAME $EFFECTIVE_PORT $EFFECTIVE_PODPORT
+}
+
+portForwardDb()
+{
+   local INPUT_NAMESPACE=$1
+   local INPUT_PORT=$2
+
+   local EFFECTIVE_PODPORT=$(defineDbPodPortFromInput $INPUT_NAMESPACE)
+   local EFFECTIVE_PORT="${INPUT_PORT:-${EFFECTIVE_PODPORT}}"
+   local EFFECTIVE_NAMESPACE="ocs" # The database proxy is running in the OCS namespace and is configured to forward to databases of both CFM and OCS.
+   local EFFECTIVE_PODNAME="magic-reverse-proxy"
+
+   echo "[Port Forward DB] - (NAMESPACE: $EFFECTIVE_NAMESPACE, PODNAME: $EFFECTIVE_PODNAME, PORT: $EFFECTIVE_PORT, PODPORT: $EFFECTIVE_PODPORT)"
+   runPortForwardPod $EFFECTIVE_NAMESPACE $EFFECTIVE_PODNAME $EFFECTIVE_PORT $EFFECTIVE_PODPORT
+}
+
+debugForwardService()
+{
+   local INPUT_NAMESPACE=$1
+   local INPUT_PODNAME=$2
+
+   local EFFECTIVE_NAMESPACE=$(defineNamespaceFromInput $INPUT_NAMESPACE)
+   local EFFECTIVE_PODNAME=$(definePodNameFromInput $EFFECTIVE_NAMESPACE $INPUT_PODNAME)
+
+   echo "[Debug Forward Service] - (NAMESPACE: $EFFECTIVE_NAMESPACE, PODNAME: $EFFECTIVE_PODNAME)"
+
+   case $EFFECTIVE_PODNAME in
+      configuration-manager-service)
+         local PORT_FORWARD_OPTIONS=("cfm#db" "secrets-manager#server-api" "secrets-manager#server-provider")
+         ;;
+      connectivity-service)
+         local PORT_FORWARD_OPTIONS=("ocs#authorization" "cfm#config-manager" "exchange#tooling" "mds#orchestrator")
+         ;;
+      admin-api-service)
+         local PORT_FORWARD_OPTIONS=("cfm#connectivity" "cfm#config-manager")
+         ;;
+      authorization-service)
+         local PORT_FORWARD_OPTIONS=("ocs#storage")
+         ;;
+      connections-service)
+         local PORT_FORWARD_OPTIONS=("ocs#storage")
+         ;;
+      storage-service)
+         local PORT_FORWARD_OPTIONS=("ocs#db" "secrets-manager#server-api" "secrets-manager#server-provider")
+         ;;
+      *) # Invalid podname
+         echo "Error:InvalidPodname"
+         exit 1
+         ;;
+   esac
+
+   runMultiplePortForwards "${PORT_FORWARD_OPTIONS[@]}"
+}
+
+############################################################
+############################################################
+# Main program                                             #
+############################################################
+############################################################
+
+############################################################
+# Process the input options.                               #
+############################################################
+
+while getopts "he:r:c:" option; do
+   case $option in
+      e) # Enter an environment
+         shopt -s nocasematch # Setting case string comparison to case insensitive
+         case $OPTARG in
+            kdev | kqa | kstg | kprod)
+               ROLE=$(echo "ro-$OPTARG" | tr '[:upper:]' '[:lower:]')
+               ;;
+            kprod-eu)
+               ROLE="ro-prod-eu";
+               ;;
+            *) # Invalid environment
+               echo "Error:InvalidEnvironment"
+               help
+               exit 1
+               ;;
+         esac
+         shopt -u nocasematch # Setting case string comparison back to case sensitive
+         echo "Setting ROLE: $ROLE"
+         ;;
+      r) # Enter a role
+         ROLE=$OPTARG
+         echo "Setting ROLE: $ROLE"
+         ;;
+      c) # Enter a cluster
+         CLUSTER=$OPTARG
+         echo "Setting CLUSTER: $CLUSTER"
+         ;;
+      h|\?) # Invalid option
+         help
+         exit 1
+         ;;
+   esac
+done
+
+############################################################
+# Process the option defaults.                             #
+############################################################
+
+#CLUSTER input
+if [ -z "$CLUSTER" ]; then
+    if [ "$ROLE" == "ro-prod-eu" ]; then
+        CLUSTER="eks-eu-central-1";
+    else
+        CLUSTER="eks-us-east-1";
+    fi
+fi
+
+#ROLE input
+if [ -z "$ROLE" ]; then
+    ROLE="ro-kqa";
+fi
+
+shift $(($OPTIND - 1))
+
+############################################################
+# Process the input Main Command.                          #
+############################################################
+
+case $1 in
+   help)
+      help
+      exit
+      ;;
+   login)
+      login
+      exit
+      ;;
+   listVersions)
+      loginAndCheck
+      listAllPodVersions
+      exit
+      ;;
+   portForward)
+      loginAndCheck
+      portForwardService $2 $3 $4
+      exit
+      ;;
+   debugForward)
+      loginAndCheck
+      debugForwardService $2 $3
+      exit
+      ;;
+   portForwardDb)
+      loginAndCheck
+      portForwardDb $2 $3
+      exit
+      ;;
+   *) # Invalid command
+      echo "Error:InvalidCommand"
+      help
+      exit 1
+      ;;
+esac

@@ -1,0 +1,276 @@
+#!/bin/bash
+# This script can be used to browse vault paths configured via Vault Configuration API/provider: https://salesforce.quip.com/c9M3AegglGQM
+# You can also create secrets for testing purposes to validate role names
+#
+# vault-ls Usage:
+#  [-inst|--instance]              [Required] falcon instance name. ex. dev1-uswest2
+#  [-root|--rootPath]              [Required] vault root path. ex. kv/hpam-root-y-01042020
+#  [-sub|--subpath]                [Optional] vault sub path. ex. hpam-sub
+#  [-vault|--vaultaddr]            [Optional] vault address. ex. https://api.vault.secrets.test1-uswest2.aws.sfdc.cl Set to default for non blackjack env when not used. This flag is required in blackjack env. The dns suffix should come from firebom value.
+#  [-h|--help]                     show help.
+#
+# e.g.
+# ./vault-ls.sh -inst dev1-uswest2 -root kv/hpam-root-y-01042020 -sub hpam-sub
+# or
+# ./vault-ls.sh -inst dev1-uswest2 -root kv/hpam-root-y-01042020
+# or
+# ./vault-ls.sh -inst dev1-uswest2 -root kv/hpam-root-y-01042020 -vault https://api.vault.secrets.aws-dev3-uswest2.aws.sfdc.cl
+# The script will login to vault with root paths rw role. If you want to login with subpath's rw role set env variable VAULT_LS_USE_SUBPATH_ROLE
+# If you want to run this script on a test stamp, set the env variable VAULT_LS_TEST_STAMP to the first part of your ALIAS_PREFIX from vars.json.
+# For example, assuming that you're following the naming convention in https://git.soma.salesforce.com/sfcd/spinnaker/blob/master/infrasecsecretsfire/vault/vars.json#L447, you would write:
+# $ export VAULT_LS_TEST_STAMP=justin-test-api
+# ***IMPORTANT*** before running the script make sure you export PCSKDeveloperRole credentials from https://dashboard.prod.aws.jit.sfdc.sh/
+# The script requires cacert to run (please provide a cert by setting VAULT_CACERT)
+# If VAULT_CACERT is not provided or empty, cert will be read from path: git.soma.salesforce.com/Infrastructure-Security/puppet_pki_agent/files/test_ca/cacerts.pem
+# VAULT_CACERT is not required if VAULT_LS_TEST_STAMP is set.
+# Link to documentation for this script: https://sfdc.co/vault-ls
+function listPath() {
+    path=$1
+    echo "list path $path"
+    vault kv list $path
+    jsonData=$(vault kv list -format json $path)
+    arr=( $(echo $jsonData | jq -r '.[]') )
+    for item in "${arr[@]}"
+    do
+      if [[ $item == *"/"* ]]
+      then
+        listPath $path/${item%/}
+      else
+        echo "***key/value pairs at $path/$item"
+        vault kv get $path/$item
+      fi
+    done
+}
+
+# pass all args along to ./vaultconfig wrapper script
+function runVaultConfigCommand() {
+  $(dirname $0)/vaultconfig $@
+}
+
+function addAccess() {
+  instance=$1
+  path=$2
+  policyFile=$3
+  vaultConfigApi=$4
+  policyJson=$(cat $policyFile | jq)
+  adminsArgs=$(echo "$policyJson" | jq -r '[.admins] | .[] | to_entries | [.[] | "--admin \(.value)"] | join(" ")')
+  readersArgs=$(echo "$policyJson" | jq -r '[.readers] | .[] | to_entries | [.[] | "--reader \(.value)"] | join(" ")')
+  writersArgs=$(echo "$policyJson" | jq -r '[.writers] | .[] | to_entries | [.[] | "--writer \(.value)"] | join(" ")')
+  args="$adminsArgs $readersArgs $writersArgs"
+  command="--address $vaultConfigApi --path $path --endpoint api/v1/policy/addKVAccess --skipsslvalidation "
+  command="$command $args"
+  runVaultConfigCommand "$command"
+}
+
+function listAccess() {
+  instance=$1
+  path=$2
+  vaultConfigApi=$3
+  command="--address $vaultConfigApi --path $path --endpoint api/v1/policy/listAccess --skipsslvalidation"
+  runVaultConfigCommand "$command"
+}
+
+function listAggregateAccess() {
+  instance=$1
+  path=$2
+  vaultConfigApi=$3
+  command="--address $vaultConfigApi --path $path --endpoint api/v1/policy/listAggregateAccess --skipsslvalidation"
+  runVaultConfigCommand "$command"
+}
+
+warningMessage="[WARNING] vault addr & config api addr are required for BlackJack Env. The dns suffix should come from firebom value. These flags are not needed outside BlackJack. \n"
+
+
+function help() {
+   echo "=============================="
+   echo "vault-ls Usage"
+   echo -e "  [-inst|--instance]              [Required] falcon instance name. ex. dev1-uswest2"
+   echo -e "  [-root|--rootPath]              [Required] vault root path. ex. kv/hpam-root-y-01042020"
+   echo -e "  [-sub|--subpath]                [Optional] vault sub path. ex. hpam-sub"
+   echo -e "  [-vault|--vaultaddr]            [Optional] vault address. ex. https://api.vault.secrets.test1-uswest2.aws.sfdc.cl Set to default for non blackjack env when not used. This flag is required in blackjack env. The dns suffix should come from firebom value."
+   echo -e "  [-h|--help]                     show help."
+   echo "=============================="
+}
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -inst|--instance)
+    instance="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -root|--rootPath)
+    rootPath="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -sub|--subpath)
+    subpath="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -vault|--vaultaddr)
+    vaultaddr="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -h|--help)
+    help
+    exit
+    ;;
+    *)
+    echo "[ERROR] unknown option $1"
+    shift
+    shift
+    exit
+    ;;
+
+esac
+done
+
+echo "=============================="
+echo "vault-ls configuration:"
+echo " instance = ${instance}"
+echo " rootPath = ${rootPath}"
+echo " subpath = ${subpath}"
+
+warningMessage="[WARNING] vault addr & config api addr are required for BlackJack Env. The dns suffix should come from firebom value. These flags are not needed outside BlackJack. \n"
+
+if [[ -n "$vaultaddr" ]]
+then
+  export VAULT_ADDR=$vaultaddr
+  awsLoginHeader=${vaultaddr/https:\/\//}
+  echo " vaultaddr = ${vaultaddr}"
+elif [[ -n $VAULT_LS_TEST_STAMP ]]
+then
+  export VAULT_ADDR=https://$VAULT_LS_TEST_STAMP.secrets.$instance.aws.sfdc.cl
+  awsLoginHeader=$VAULT_LS_TEST_STAMP.secrets.$instance.aws.sfdc.cl
+  echo -e " vaultaddr = ${VAULT_ADDR} (default) $warningMessage"
+else
+  export VAULT_ADDR=https://api.vault.secrets.$instance.aws.sfdc.cl
+  awsLoginHeader=api.vault.secrets.$instance.aws.sfdc.cl
+  echo -e " vaultaddr = ${VAULT_ADDR} (default) \n $warningMessage"
+fi
+
+export AWS_REGION=us-east-1 # STS service is always in us-east-1
+if [[ -n $VAULT_LS_TEST_STAMP ]]
+then
+  export VAULT_SKIP_VERIFY=1
+else
+  vaultCaCert=${VAULT_CACERT:-$GOPATH/src/git.soma.salesforce.com/Infrastructure-Security/puppet_pki_agent/files/test_ca/cacerts.pem}
+  echo "using vault cert $vaultCaCert"
+  export VAULT_CACERT=$vaultCaCert
+fi
+
+if [ -z $subpath ]
+then
+  vaultPath=$rootPath
+else
+  vaultPath=$rootPath/$subpath
+fi
+
+if [[ -n $VAULT_LS_USE_SUBPATH_ROLE ]]
+then
+  vaultReaderWriterRole="${vaultPath//\//_}-rw"
+else
+  vaultReaderWriterRole="${rootPath//\//_}-rw"
+fi
+
+if [[ -n "$vaultaddr" ]]
+then
+  vaultConfigApi=${vaultaddr/vault/vault-config.top}
+  echo " configapiaddr = ${vaultConfigApi}"
+elif [[ -n $VAULT_LS_TEST_STAMP ]]
+then
+  vaultConfigApi=https://$VAULT_LS_TEST_STAMP-config.top.secrets.$1.aws.sfdc.cl
+  echo -e " configapiaddr = ${vaultConfigApi} (default) \n $warningMessage"
+else
+  vaultConfigApi=https://api.vault-config.top.secrets.$instance.aws.sfdc.cl
+  echo -e " configapiaddr = ${vaultConfigApi} (default) \n $warningMessage"
+fi
+
+echo "=============================="
+
+echo "Using vault role $vaultReaderWriterRole"
+export VAULT_TOKEN=$(vault login -token-only -address=$VAULT_ADDR -method=aws header_value=$awsLoginHeader role=$vaultReaderWriterRole)
+
+echo "Vault token details"
+vault token lookup
+
+option="0"
+while [ "$option" -ne "9" ]
+  do
+  read -p "Pick operation for path $vaultPath:
+   1.  list path
+   2.  list path recursive
+   3.  write secret
+   4.  read secret
+   10. read secret version
+   5.  list access
+   6.  list aggregate access (effective ACLs on path)
+   7.  run command
+   8.  add policy from file
+   9.  exit
+   " option
+
+  if [[ $option == "1" ]]
+  then
+    vault kv list $vaultPath
+  fi
+
+  if [[ $option == "2" ]]
+  then
+    echo "***Traverse path $vaultPath"
+    listPath $vaultPath
+  fi
+
+  if [[ $option == "3" ]]
+  then
+    read -p "Enter secretName and key=value pairs, e.g. testsecret testkey1=testvalue1 testkey2=testvalue2
+    " input
+    vault kv put $vaultPath/$input
+  fi
+
+  if [[ $option == "4" ]]
+  then
+    read -p "Enter secretName
+    " input
+    vault kv get $vaultPath/$input
+  fi
+
+  if [[ $option == "5" ]]
+  then
+    listAccess $instance $vaultPath $vaultConfigApi
+  fi
+
+  if [[ $option == "6" ]]
+  then
+    listAggregateAccess $instance $vaultPath $vaultConfigApi
+  fi
+
+  if [[ $option == "7" ]]
+  then
+    read -p "Enter command
+    " input
+    vault $input
+  fi
+
+  if [[ $option == "8" ]]
+  then
+    read -p "Enter policyFile path
+    " input
+    addAccess $instance $vaultPath $input $vaultConfigApi
+  fi
+
+  if [[ $option == "10" ]]
+  then
+    read -p "Enter secretName
+    " secretName
+    read -p "Enter version
+    " version
+    vault kv get -version=$version $vaultPath/$secretName
+  fi
+done
