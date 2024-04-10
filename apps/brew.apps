@@ -1,4 +1,5 @@
 tap 'jupmoreno/apps'
+tap 'hashicorp/tap'
 
 # Command line
 brew 'bash'
@@ -38,7 +39,8 @@ brew 'git'
 brew 'gh'
 brew 'diff-so-fancy'
 brew 'yuicompressor'
-brew 'terraform'
+brew 'hashicorp/tap/terraform'
+brew 'terraform-docs'
 brew 'vault'
 
 # Infra Tools
