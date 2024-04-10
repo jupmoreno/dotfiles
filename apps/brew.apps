@@ -40,8 +40,9 @@ brew 'gh'
 brew 'diff-so-fancy'
 brew 'yuicompressor'
 brew 'hashicorp/tap/terraform'
+brew 'opentofu'
 brew 'terraform-docs'
-brew 'vault'
+brew 'hashicorp/tap/vault'
 
 # Infra Tools
 brew 'kind'
