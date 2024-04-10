@@ -11,6 +11,7 @@ export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="/usr/local/opt/whois/bin:$PATH"
 export PATH="/usr/local/opt/swift/bin:$PATH"
 export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
+export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
 export PATH="$HOME/.bin:$PATH"
 
 eval $(thefuck --alias)
