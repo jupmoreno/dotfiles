@@ -1,3 +1,5 @@
+eval "$(/usr/local/bin/brew shellenv)"
+
 [ -f ~/.shellrc_local ] && source ~/.shellrc_local
 
 [ -d $HOME/Projects ] && export projects="$HOME/Projects"
