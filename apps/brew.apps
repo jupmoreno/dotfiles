@@ -39,14 +39,16 @@ brew 'git'
 brew 'gh'
 brew 'diff-so-fancy'
 brew 'yuicompressor'
-brew 'hashicorp/tap/terraform'
-brew 'opentofu'
-brew 'terraform-docs'
-brew 'hashicorp/tap/vault'
 
 # Infra Tools
 brew 'kind'
 brew 'helm'
+brew 'awscli'
+brew 'localstack/tap/localstack-cli'
+brew 'hashicorp/tap/terraform'
+brew 'opentofu'
+brew 'terraform-docs'
+brew 'hashicorp/tap/vault'
 
 # Package managers
 brew 'mas'
@@ -69,7 +71,6 @@ brew 'htop'
 # Services
 #brew 'postgresql'
 #brew 'nginx'
-brew 'awscli'
 
 # Backups
 #brew 'duplicity'
