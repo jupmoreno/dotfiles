@@ -1,0 +1,52 @@
+- name: Dotfiles entrypoint
+  hosts: localhost
+
+  pre_tasks:
+  - name: Update all submodules
+    command:
+      cmd: git submodule update --force --init --recursive --jobs 4
+    changed_when: false
+    tags: update
+
+  - block:
+    - name: Check if homebrew is installed
+      shell: command -v brew >/dev/null 2>&1
+      register: homebrew_installed_check
+    - name: Set homebrew_installed
+      set_fact:
+        homebrew_installed: "{{ not homebrew_installed_check.failed }}"
+    rescue:
+    - name: Install homebrew
+      command:
+        cmd: /bin/bash -c "NONINTERACTIVE=1 $(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    tags: always
+
+  - block:
+    - name: Upgrade homebrew
+      community.general.homebrew:
+        update_homebrew: true
+      register: homebrew_upgraded_check
+    - name: Set homebrew_upgraded
+      set_fact:
+        homebrew_upgraded: "{{ not homebrew_upgraded_check.failed }}"
+    tags: update
+
+  tasks:
+  # TODO: Where to put this?
+  # - name: Upgrade homebrew apps
+  #   community.general.homebrew:
+  #     upgrade_all: true
+  #   tags: update
+
+  # TODO: Update all mas apps
+
+  - name: Run role
+    ansible.builtin.include_role:
+      name: '{{ item }}'
+      apply:
+        tags:
+          - '{{ item }}'
+    tags: always
+    loop:
+      # - shell
+      - apps

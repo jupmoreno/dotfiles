@@ -1,0 +1,7 @@
+- name: Install npm app "{{ npm_item.name | default(npm_item) }}"
+  community.general.npm:
+    name: "{{ npm_item.name | default(npm_item) }}"
+    state: latest
+    global: true
+  tags: "{{ npm_item.tags | default(omit) }}"
+  when: npm_item is defined

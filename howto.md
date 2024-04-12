@@ -44,7 +44,9 @@
 
     - Extensions, add `1Password` and other extensions
 
-    - Chrome Settings -> Languages, add Spanish to `Never translate`
+    - Chrome Settings -> Languages, and turn off `Google Translate`
+
+    - Max -> turn on `Max` and select features
 
     - View -> select `Show toolbar`
 

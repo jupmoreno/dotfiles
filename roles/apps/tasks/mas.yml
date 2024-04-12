@@ -1,0 +1,7 @@
+- name: Install mas app "{{ mas_item.id | default(mas_item) }}"
+  community.general.mas:
+    id: "{{ mas_item.id | default(mas_item) }}"
+    state: "{{ mas_item.state | default('latest') }}"
+  become: "{{ 'yes' if (mas_item.state | default('latest')) == 'absent' else 'no' }}"
+  tags: "{{ mas_item.tags | default(omit) }}"
+  when: mas_item is defined

@@ -1,0 +1,17 @@
+[ -f ~/.shellrc ] && source ~/.shellrc
+
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+  autoload -Uz compinit
+  compinit
+  compaudit | xargs chmod go-w
+fi
+
+eval "$(atuin init zsh)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+eval "$(starship init zsh)"
+
+[ -f ~/.zsh_plugins ] && source ~/.zsh_plugins
