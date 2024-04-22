@@ -1,0 +1,19 @@
+- name: Install pip app "{{ pip_app.name | default(pip_app) }}"
+  ansible.builtin.pip:
+    name: "{{ pip_app.name | default(pip_app) }}"
+    state: "{{ pip_app.state | default(pip_default_state) }}"
+  tags: "{{ pip_app.tags | default(omit) }}"
+  when: pip_app is defined
+
+- name: Add files for pip app "{{ pip_app.name | default(pip_app) }}"
+  include_role:
+    name: "jupmoreno.dotfiles.files"
+  vars:
+    files_base_path: "{{ files_base_path | default(omit) }}"
+    files:
+      default: "{{ pip_app.files | default([], true) }}"
+      links: "{{ pip_app.links | default([], true) }}"
+      hardlinks: "{{ pip_app.hardlinks | default([], true) }}"
+      copies: "{{ pip_app.copies | default([], true) }}"
+  tags: "{{ pip_app.tags | default(omit) }}"
+  when: pip_app.files is defined or pip_app.links is defined or pip_app.hardlinks is defined or pip_app.copies is defined

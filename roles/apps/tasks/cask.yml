@@ -1,9 +1,0 @@
-- name: Install cask app "{{ cask_item.name | default(cask_item) }}"
-  community.general.homebrew_cask:
-    name: "{{ cask_item.name | default(cask_item) }}"
-    state: latest
-    sudo_password: "{{ ansible_become_password | default(omit) }}"
-  tags: "{{ cask_item.tags | default(omit) }}"
-  when: 
-  - cask_item is defined
-  - cask_item.arch | default(ansible_architecture, true) == ansible_architecture

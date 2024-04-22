@@ -1,0 +1,22 @@
+- name: Install cask app "{{ cask_app.name | default(cask_app) }}"
+  community.general.homebrew_cask:
+    name: "{{ cask_app.name | default(cask_app) }}"
+    state: "{{ cask_app.state | default(cask_default_state) }}"
+    # TODO: Fix sudo_password: "{{ ansible_become_pass }}"
+  tags: "{{ cask_app.tags | default(omit) }}"
+  when:
+    - cask_app is defined
+    - cask_app.arch | default(ansible_architecture, true) == ansible_architecture
+
+- name: Add files for cask app "{{ cask_app.name | default(cask_app) }}"
+  include_role:
+    name: "jupmoreno.dotfiles.files"
+  vars:
+    files_base_path: "{{ files_base_path | default(omit) }}"
+    files:
+      default: "{{ cask_app.files | default([], true) }}"
+      links: "{{ cask_app.links | default([], true) }}"
+      hardlinks: "{{ cask_app.hardlinks | default([], true) }}"
+      copies: "{{ cask_app.copies | default([], true) }}"
+  tags: "{{ cask_app.tags | default(omit) }}"
+  when: cask_app.files is defined or cask_app.links is defined or cask_app.hardlinks is defined or cask_app.copies is defined

@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+set -e -o pipefail
+
+DOTFILES_HOME="$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P)/../"
+DOTFILES_CONFIG=${HOME}/.config/dotfiles/env
+declare -a DOTFILES_TAGS
+declare -a DOTFILES_SKIP_TAGS
+
+load_config() {
+    if [ -n "$PARAM_CONFIG" ]; then
+        DOTFILES_CONFIG=$PARAM_CONFIG
+    fi
+
+    if [ -f $DOTFILES_CONFIG ]; then
+        info "Loading config from $DOTFILES_CONFIG"
+        source $DOTFILES_CONFIG
+        success "Done"
+    fi
+
+    if [ -n "$PARAM_HOME" ]; then
+        DOTFILES_HOME=$PARAM_HOME
+    fi
+
+    if [ -n "$PARAM_TAGS" ]; then
+        DOTFILES_TAGS=("${DOTFILES_TAGS[@]}" "${PARAM_TAGS[@]}")
+    fi
+
+    if [ -n "$PARAM_SKIP_TAGS" ]; then
+        DOTFILES_SKIP_TAGS=("${DOTFILES_SKIP_TAGS[@]}" "${PARAM_SKIP_TAGS[@]}")
+    fi
+
+    echo "HOME: $DOTFILES_HOME"
+}
+
+check_brew_installed() {
+	if ! (hash brew 2>/dev/null); then
+		info "Installing homebrew..."
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		success "Done"
+	fi
+}
+
+check_ansible_installed() {
+	if ! (hash ansible 2>/dev/null); then
+		check_brew_installed
+		info "Installing ansible..."
+		brew install ansible
+		success "Installed ansible"
+		exit 1
+	fi
+}
+
+run() {
+	info "Checking ansible is installed..."
+	check_ansible_installed
+
+	local tags=""
+    if [ -n "$DOTFILES_TAGS" ]; then
+        tags="--tags $(IFS=','; echo "${DOTFILES_TAGS[*]}")"
+    fi
+
+	local skip_tags=""
+	if [ -n "$DOTFILES_SKIP_TAGS" ]; then
+        skip_tags="--skip-tags $(IFS=','; echo "${DOTFILES_SKIP_TAGS[*]}")"
+    fi
+
+    info "Running playbook..."
+	ANSIBLE_CONFIG=${DOTFILES_HOME}/ansible.cfg ansible-playbook -K ${DOTFILES_HOME}/main.yml $tags $skip_tags
+	success "Done"
+}
+
+main() {
+	while [[ $# -gt 0 ]]; do
+		key="$1" ; shift
+		case $key in
+		    -h|--home)      PARAM_HOME="$1"; shift ;;
+		    -c|--config)    PARAM_CONFIG="$1"; shift ;;
+		    -t|--tags)      readarray -td, PARAM_TAGS <<<"$1"; shift ;;
+			-s|--skip-tags) readarray -td, PARAM_SKIP_TAGS <<<"$1"; shift ;;
+			*)              fail "Unknown parameter: $key"; exit 1 ;;
+		esac
+	done
+
+	load_config
+	run
+}
+
+function info () {
+	printf '\033[0;34m'"$1\n"'\033[0m'
+}
+
+function user () {
+	printf '\033[0;33m'"$1"'\033[0m'
+}
+
+function success () {
+	printf '\033[0;32m'"$1\n"'\033[0m'
+}
+
+function fail () {
+	printf '\033[0;31m'"$1\n"'\033[0m'
+}
+
+function ask_continue () {
+	echo "Continue?"
+	select yn in "Yes" "No"; do
+		case $yn in
+			Yes ) break;;
+			No ) exit;;
+		esac
+	done
+	echo ""
+}
+
+contains() {
+	local word=$1 ; shift
+	for e in "$@"; do [[ "$e" == "$word" ]] && return 0; done
+	return 1
+}
+
+main "${@}"

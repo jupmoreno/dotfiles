@@ -20,91 +20,87 @@
 
 - [🔴] Open `1Password`
 
-    - Sign in
+  - Sign in
 
-    - Settings -> General -> Keyboard Shortcuts -> Set `Show Quick Access` to `Ctrl + Space`
+  - Settings -> General -> Keyboard Shortcuts -> Set `Show Quick Access` to `Ctrl + Space`
 
-    - Settings -> Privacy -> Watchtower -> Select `Check for vulnerable passowords`
+  - Settings -> Privacy -> Watchtower -> Select `Check for vulnerable passowords`
 
-    - Settings -> Developer -> select `Use the SSH agent`
+  - Settings -> Developer -> select `Use the SSH agent`
 
-    - Settings -> Developer -> Select `Connect with 1Password CLI`
+  - Settings -> Developer -> Select `Connect with 1Password CLI`
 
 - [🔴] Open `Arc`
 
-    - Sign in
+  - Sign in
 
-    - Set as default browser
+  - Set as default browser
 
-    - General, set `Archive tabs after` to `7 days`
+  - General, set `Archive tabs after` to `7 days`
 
-    - General -> Passwords, turn off `Offer to save passwords`
+  - Extensions, add `1Password` and other extensions
 
-    - General -> Credit Cards, turn off `Save and fill payment methods`
+  - Chrome Settings -> Languages, and turn off `Google Translate`
 
-    - Extensions, add `1Password` and other extensions
+  - Max -> turn on `Max` and select features
 
-    - Chrome Settings -> Languages, and turn off `Google Translate`
-
-    - Max -> turn on `Max` and select features
-
-    - View -> select `Show toolbar`
+  - View -> select `Show toolbar`
 
 - [🔴] Open `JetBrains Toolbox`
 
-    - Login
+  - Login
 
-    - Settings -> Set `Global shortcut to open Toolbox` to `Ctrl + Cmd + O`
+  - Settings -> Set `Global shortcut to open Toolbox` to `Ctrl + Cmd + O`
 
-    - Settings -> Tools -> Select `Update all tools automatically`
+  - Settings -> Tools -> Select `Update all tools automatically`
 
-    - Install desired tools
+  - Install desired tools
 
 - [🟢] Open `JetBrains Intellij IDEA` and any other Jetbrains IDE
 
-    - Login
+  - Login
 
-    - Settings -> Settings Sync -> Enable, select all settings
+  - Settings -> Settings Sync -> Enable, select all settings
 
-    - Settings -> Settings Sync -> Set `Sync settings across` to `All JetBrains IDE products`
+  - Settings -> Settings Sync -> Set `Sync settings across` to `All JetBrains IDE products`
 
 - [🔴] Open `RapidAPI`
 
-    - Sign in
+  - Sign in
 
 - [🔴] Open `WhatsApp`
 
-    - Sign in
+  - Sign in
 
 - [🔴] Open `Docker`
 
-    - Accept terms
+  - Accept terms
 
 - [🔴] Open `Magnet`
 
-    - Accept terms
+  - Accept terms
 
-    - Select `Launch Magnet at Login`
+  - Select `Launch Magnet at Login`
 
 - [🟡] Open `Logi Options`
 
-    - Allow access
+  - Allow access
 
 - [🟡] Open `Itsycal`
 
-    - Allow access
+  - Allow access
 
 - [🟡] Open `Bartender`
 
-    - Allow access
+  - Allow access
 
 - [🟡] Open `Karabiner Elements`
 
-    - Allow access
+  - Allow access
 
 - [🟡] Open `Maccy`
 
-    - Allow access
+  - Allow access
 
 - [🟡] Open `Gas Maks`
 
@@ -118,9 +114,9 @@
 
 - Go to `System Preferences -> General -> Login items`
 
-    - Review `Open at Login` list
-    
-    - Review `Applications in the Background` list
+  - Review `Open at Login` list
+
+  - Review `Applications in the Background` list
 
 # TODO
 

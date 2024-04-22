@@ -1,0 +1,8 @@
+files_base_path:
+files_default_state: link
+
+files:
+  default:
+  links:
+  hardlinks:
+  copies:

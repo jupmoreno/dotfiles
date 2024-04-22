@@ -1,6 +1,0 @@
-- name: Install pip app "{{ pip_item.name | default(pip_item) }}"
-  ansible.builtin.pip:
-    name: "{{ pip_item.name | default(pip_item) }}"
-    state: latest
-  tags: "{{ pip_item.tags | default(omit) }}"
-  when: pip_item is defined

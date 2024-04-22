@@ -1,6 +1,0 @@
-- name: Tap repositories
-  community.general.homebrew_tap:
-    name: "{{ tap_item }}"
-  loop: "{{ tap }}"
-  loop_control:
-    loop_var: tap_item

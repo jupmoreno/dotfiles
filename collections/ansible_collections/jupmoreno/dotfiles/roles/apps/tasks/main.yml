@@ -1,0 +1,76 @@
+- include_tasks:
+    file: tap.yml
+  tags:
+    - tap
+    - brew
+    - cask
+
+- include_tasks:
+    file: brew.yml
+    apply:
+      tags: brew
+  loop: "{{ apps.brew | default([], true) }}"
+  loop_control:
+    loop_var: brew_app
+  tags: brew
+
+- include_tasks:
+    file: cask.yml
+    apply:
+      tags: cask
+  loop: "{{ apps.cask | default([], true) }}"
+  loop_control:
+    loop_var: cask_app
+  tags: cask
+
+- include_tasks:
+    file: mas.yml
+    apply:
+      tags: mas
+  loop: "{{ apps.mas | default([], true) }}"
+  loop_control:
+    loop_var: mas_app
+  tags: mas
+
+- include_tasks:
+    file: pip.yml
+    apply:
+      tags: pip
+  loop: "{{ apps.pip | default([], true) }}"
+  loop_control:
+    loop_var: pip_app
+  tags: pip
+
+- include_tasks:
+    file: npm.yml
+    apply:
+      tags: npm
+  loop: "{{ apps.npm | default([], true) }}"
+  loop_control:
+    loop_var: npm_app
+  tags: npm
+
+- name: Upgrade all brew apps
+  community.general.homebrew:
+    upgrade_all: true
+  tags:
+    - brew
+    - update
+  when: brew_upgrade_all
+
+- name: Upgrade all cask apps
+  community.general.homebrew_cask:
+    upgrade_all: true
+  tags:
+    - cask
+    - update
+  when: cask_upgrade_all
+
+- name: Upgrade all mas apps
+  community.general.mas:
+    upgrade_all: true
+  tags:
+    - mas
+    - update
+  when: mas_upgrade_all
+# TODO: Brew cleanup

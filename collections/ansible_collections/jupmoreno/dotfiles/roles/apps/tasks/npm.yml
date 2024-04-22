@@ -1,0 +1,20 @@
+- name: Install npm app "{{ npm_app.name | default(npm_app) }}"
+  community.general.npm:
+    name: "{{ npm_app.name | default(npm_app) }}"
+    state: "{{ npm_app.state | default(npm_default_state) }}"
+    global: true
+  tags: "{{ npm_app.tags | default(omit) }}"
+  when: npm_app is defined
+
+- name: Add files for npm app "{{ npm_app.name | default(npm_app) }}"
+  include_role:
+    name: "jupmoreno.dotfiles.files"
+  vars:
+    files_base_path: "{{ files_base_path | default(omit) }}"
+    files:
+      default: "{{ npm_app.files | default([], true) }}"
+      links: "{{ npm_app.links | default([], true) }}"
+      hardlinks: "{{ npm_app.hardlinks | default([], true) }}"
+      copies: "{{ npm_app.copies | default([], true) }}"
+  tags: "{{ npm_app.tags | default(omit) }}"
+  when: npm_app.files is defined or npm_app.links is defined or npm_app.hardlinks is defined or npm_app.copies is defined

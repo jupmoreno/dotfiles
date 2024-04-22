@@ -1,6 +1,6 @@
 [ -f ~/.shellrc ] && source ~/.shellrc
 
-[ -f ~/.bash_sensible ] && source ~/.bash_sensible
+[ -f ~/.config/shell/bash_sensible ] && source ~/.config/shell/.bash_sensible
 
 [ -f /usr/local/etc/profile.d/bash-preexec.sh ] && . /usr/local/etc/profile.d/bash-preexec.sh
 
@@ -14,6 +14,6 @@ shopt -s cdspell;
 
 eval "$(atuin init bash)"
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.config/shell/fzf.bash ] && source ~/.config/shell/.fzf.bash
 
 eval "$(starship init bash)"
