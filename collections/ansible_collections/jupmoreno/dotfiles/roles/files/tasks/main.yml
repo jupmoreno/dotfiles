@@ -1,0 +1,57 @@
+- include_tasks:
+    file: link.yml
+  loop: "{{ files.default | default([], true) }}"
+  loop_control:
+    loop_var: file_item
+  vars:
+    # TODO: Better way
+    file_item_src: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).key, file_item.src) | mandatory }}"
+    file_item_dst: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).value, file_item.dst) | mandatory }}"
+    file_item_state: "{{ file_item.type | default(files_default_state) }}"
+  when:
+    - file_item_state in ['hard', 'link']
+
+- include_tasks:
+    file: link.yml
+  loop: "{{ files.links | default([], true) }}"
+  loop_control:
+    loop_var: file_item
+  vars:
+    # TODO: Better way
+    file_item_src: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).key, file_item.src) | mandatory }}"
+    file_item_dst: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).value, file_item.dst) | mandatory }}"
+    file_item_state: "link"
+
+- include_tasks:
+    file: link.yml
+  loop: "{{ files.hardlinks | default([], true) }}"
+  loop_control:
+    loop_var: file_item
+  vars:
+    # TODO: Better way
+    file_item_src: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).key, file_item.src) | mandatory }}"
+    file_item_dst: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).value, file_item.dst) | mandatory }}"
+    file_item_state: "hard"
+
+- include_tasks:
+    file: copy.yml
+  loop: "{{ files.default | default([], true) }}"
+  loop_control:
+    loop_var: file_item
+  vars:
+    # TODO: Better way
+    file_item_src: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).key, file_item.src) | mandatory }}"
+    file_item_dst: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).value, file_item.dst) | mandatory }}"
+    file_item_state: "{{ file_item.type | default(files_default_state) }}"
+  when:
+    - file_item_state == 'copy'
+
+- include_tasks:
+    file: copy.yml
+  loop: "{{ files.copies | default([], true) }}"
+  loop_control:
+    loop_var: file_item
+  vars:
+    # TODO: Better way
+    file_item_src: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).key, file_item.src) | mandatory }}"
+    file_item_dst: "{{ ((file_item.keys() | length) == 1) | ternary(lookup('ansible.builtin.dict', file_item).value, file_item.dst) | mandatory }}"

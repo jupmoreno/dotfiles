@@ -1,0 +1,20 @@
+- name: Install mas app "{{ mas_app.id | default(mas_app) }}"
+  community.general.mas:
+    id: "{{ mas_app.id | default(mas_app) }}"
+    state: "{{ mas_app.state | default(mas_default_state) }}"
+  become: "{{ (mas_app.state | default(mas_default_state)) == 'absent' }}"
+  tags: "{{ mas_app.tags | default(omit) }}"
+  when: mas_app is defined
+
+- name: Add files for mas app "{{ mas_app.id | default(mas_app) }}"
+  include_role:
+    name: "jupmoreno.dotfiles.files"
+  vars:
+    files_base_path: "{{ files_base_path | default(omit) }}"
+    files:
+      default: "{{ mas_app.files | default([], true) }}"
+      links: "{{ mas_app.links | default([], true) }}"
+      hardlinks: "{{ mas_app.hardlinks | default([], true) }}"
+      copies: "{{ mas_app.copies | default([], true) }}"
+  tags: "{{ mas_app.tags | default(omit) }}"
+  when: mas_app.files is defined or mas_app.links is defined or mas_app.hardlinks is defined or mas_app.copies is defined

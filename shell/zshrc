@@ -10,8 +10,8 @@ fi
 
 eval "$(atuin init zsh)"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.config/shell/.fzf.zsh ] && source ~/.config/shell/.fzf.zsh
 
 eval "$(starship init zsh)"
 
-[ -f ~/.zsh_plugins ] && source ~/.zsh_plugins
+[ -f ~/.config/shell/zsh_plugins ] && source ~/.config/shell/.zsh_plugins

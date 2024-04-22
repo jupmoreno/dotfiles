@@ -1,0 +1,93 @@
+- name: Dotfiles entrypoint
+  hosts: localhost
+  vars_files:
+    - config.yml
+
+  pre_tasks:
+    - name: Print tags
+      debug:
+        msg: "Tags: {{ ansible_run_tags }}, Skipped: {{ ansible_skip_tags }}"
+      tags: always
+
+    - name: Update all submodules
+      command:
+        cmd: git submodule update --force --init --recursive --jobs 4
+      changed_when: false
+      tags: update
+
+    - block:
+        - name: Check if homebrew is installed
+          shell: command -v brew >/dev/null 2>&1
+          register: homebrew_installed_check
+        - name: Set homebrew_installed
+          set_fact:
+            homebrew_installed: "{{ not homebrew_installed_check.failed }}"
+      rescue:
+        - name: Install homebrew
+          command:
+            cmd: /bin/bash -c "NONINTERACTIVE=1 $(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      tags: always
+
+    - name: Upgrade homebrew
+      community.general.homebrew:
+        update_homebrew: true
+      tags: update
+
+  tasks:
+    - name: Install apps
+      include_role:
+        name: "jupmoreno.dotfiles.apps"
+        apply:
+          tags: apps
+      vars:
+        files_base_path: "{{ playbook_dir }}"
+        brew_upgrade_all: true
+        cask_upgrade_all: true
+        mas_upgrade_all: true
+        apps:
+          taps: "{{ taps | default([]) }}"
+          brew: "{{ brew_apps | default([]) }}"
+          cask: "{{ cask_apps | default([]) }}"
+          mas: "{{ mas_apps | default([]) }}"
+          npm: "{{ npm_apps | default([]) }}"
+          pip: "{{ pip_apps | default([]) }}"
+      tags:
+        - always
+        - apps
+
+    - name: Install fonts
+      include_role:
+        name: "jupmoreno.dotfiles.fonts"
+        apply:
+          tags: fonts
+      vars:
+        fonts:
+          cask: "{{ cask_fonts | default([]) }}"
+      tags:
+        - always
+        - fonts
+
+    - name: Add files
+      include_role:
+        name: "jupmoreno.dotfiles.files"
+        apply:
+          tags: files
+      vars:
+        files_base_path: "{{ playbook_dir }}"
+        files:
+          links: "{{ links | default([]) }}"
+          hardlinks: "{{ hardlinks | default([]) }}"
+          copies: "{{ copies | default([]) }}"
+      tags:
+        - always
+        - files
+
+    - name: Update system
+      include_role:
+        name: "jupmoreno.dotfiles.macos"
+        apply:
+          tags: system
+      tags:
+        - always
+        - update
+        - system

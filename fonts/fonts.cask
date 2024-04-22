@@ -1,9 +1,0 @@
-tap 'homebrew/cask-fonts'
-
-cask 'font-hack'
-cask 'font-input'
-cask 'font-hack-nerd-font'
-cask 'font-sf-compact'
-cask 'font-sf-mono'
-cask 'font-sf-mono-for-powerline'
-cask 'font-sf-pro'

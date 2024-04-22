@@ -1,0 +1,25 @@
+- block:
+    - name: Install brew app "{{ brew_app.name | default(brew_app) }}"
+      community.general.homebrew:
+        name: "{{ brew_app.name | default(brew_app) }}"
+        state: "{{ brew_app.state | default(brew_default_state) }}"
+      register: output
+  rescue:
+    - name: Fail if error is not due to cask collision warning
+      fail:
+        msg: "{{ output.msg }}"
+      when: output.msg is match('"Treating .* as a formula. For the cask, use .* or specify the `--cask` flag"')
+  tags: "{{ brew_app.tags | default(omit) }}"
+  when: brew_app is defined
+
+- name: Add files for brew app "{{ brew_app.name | default(brew_app) }}"
+  include_role:
+    name: "jupmoreno.dotfiles.files"
+  vars:
+    files:
+      default: "{{ brew_app.files | default([], true) }}"
+      links: "{{ brew_app.links | default([], true) }}"
+      hardlinks: "{{ brew_app.hardlinks | default([], true) }}"
+      copies: "{{ brew_app.copies | default([], true) }}"
+  tags: "{{ brew_app.tags | default(omit) }}"
+  when: brew_app.files is defined or brew_app.links is defined or brew_app.hardlinks is defined or brew_app.copies is defined

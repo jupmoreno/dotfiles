@@ -1,5 +1,6 @@
 # Logs
 .logs
+
 # macOS
 ## General
 .DS_Store
@@ -24,3 +25,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.lock.json
+
+# Editor
+## VS Code
+.vscode

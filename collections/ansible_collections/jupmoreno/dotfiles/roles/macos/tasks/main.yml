@@ -1,0 +1,6 @@
+- name: Update system
+  command:
+    cmd: softwareupdate --all --install --agree-to-license
+  become: true
+  tags:
+    - update

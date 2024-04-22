@@ -3,7 +3,12 @@ set -e -o pipefail
 
 # TODO: Install command line tools if required
 
-DOTFILES_DESTINATION="${DOTFILES_DESTINATION:-"${HOME}/.dotfiles"}"
-DOTFILES_GIT_REMOTE="${DOTFILES_GIT_REMOTE:-"https://github.com/jupmoreno/dotfiles.git"}"
+DOTFILES_HOME="${DOTFILES_HOME:-"${HOME}/.dotfiles"}"
+DOTFILES_CONFIG="${HOME}/.config/dotfiles/env"
 
-git clone --recursive ${DOTFILES_GIT_REMOTE} ${DOTFILES_DESTINATION}
+git clone --recursive https://github.com/jupmoreno/dotfiles.git ${DOTFILES_HOME}
+
+mkdir -p "$(dirname "$DOTFILES_CONFIG")"
+cat > ${HOME}/.config/dotfiles/env << EOF
+DOTFILES_HOME=${DOTFILES_HOME}
+EOF

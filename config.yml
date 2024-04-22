@@ -1,0 +1,230 @@
+taps:
+  - hashicorp/tap
+  - homebrew/cask-versions
+  - localstack/tap
+
+brew_apps:
+  # Command line tools
+  - name: bash
+    files:
+      - shell/bashrc: ~/.bashrc
+      - shell/bash_profile: ~/.bash_profile
+      - shell/bash_sensible: ~/.config/shell/.bash_sensible
+  - bash-preexec
+  - bash-completion@2
+  - name: zsh
+    files:
+      - shell/zshrc: ~/.zshrc
+      - shell/zsh_plugins: ~/.config/shell/.zsh_plugins
+  - zsh-completions
+  - name: fzf
+    files:
+      - shell/fzf.zsh: ~/.config/shell/fzf.zsh
+      - shell/fzf.bash: ~/.config/shell/fzf.bash
+  - name: starship
+    files:
+      - shell/starship.toml: ~/.config/shell/starship/config.toml
+  - name: atuin
+    files:
+      - shell/atuin.toml: ~/.config/shell/atuin/config.toml
+  - zoxide
+  - thefuck
+  - cheat
+  - howdoi
+  - tree
+  - grep
+  - awk
+  - gnu-sed
+  - less
+  - findutils
+  - gpg
+  - pinentry-mac
+  - watch
+  - jq
+  - yq
+  - jid
+  - bat
+  - qemu
+  - openssh
+  - htop
+  # Programming languages
+  - node
+  - ruby
+  - swift
+  - go
+  - scala
+  - kotlin
+  - rust
+  - python
+  - gcc
+  #- name: octave
+  # Programming tools
+  - checkstyle
+  - pmd
+  - maven
+  - gradle
+  - ant
+  - make
+  - cmake
+  - jenv
+  - name: git
+    files:
+      - git/gitignore: ~/.gitignore_global
+      - git/gitconfig: ~/.gitconfig
+  - gh
+  - diff-so-fancy
+  - yuicompressor
+  - artillery
+  # Infrastructure tools
+  - name: kubernetes-cli
+    files:
+      - shell/kubectl_aliases: ~/.config/shell/kubectl_aliases
+  - kind
+  - helm
+  - awscli
+  - localstack/tap/localstack-cli
+  - hashicorp/tap/terraform
+  - opentofu
+  - terraform-docs
+  - hashicorp/tap/vault
+  # Editors
+  - name: vim
+    files:
+      - vim/vimrc: ~/.vimrc
+      - vim/autoload: ~/.vim/autoload
+  - nano
+  # Download tools
+  #- name: youtube-dl
+  #- name: you-get
+  - curl
+  - wget
+  # Backup tools
+  #- name: duplicity
+  #- name: syncthing
+  # Services
+  #- name: postgresql
+  #- name: nginx
+  # Scripting tools
+  #- name: m-cli
+  #- name: chrome-cli
+  # Media tools
+  - { name: ffmpeg, tags: ["media-apps", "!salesforce"] }
+  - { name: fprobe, tags: ["media-apps", "!salesforce"] }
+  - { name: nmap, tags: ["net-apps", "!salesforce"] }
+  - { name: netcat, tags: ["net-apps", "!salesforce"] }
+  - { name: whois, tags: ["net-apps", "!salesforce"] }
+  - { name: httpstat, tags: ["net-apps", "!salesforce"] }
+  - { name: httpie, tags: ["net-apps", "!salesforce"] }
+  - { name: binutils, tags: ["os-dev-apps", "!salesforce"] }
+  - { name: coreutils, tags: ["os-dev-apps", "!salesforce"] }
+  #- { name: jupmoreno/apps/crossyc, tags: os-dev-apps }
+  - { name: nasm, tags: ["os-dev-apps", "!salesforce"] }
+
+cask_apps:
+  # System utils
+  - bartender
+  #- bettertouchtool
+  - karabiner-elements
+  #- alfred
+  - itsycal
+  - gas-mask
+  #- lumen
+  - contexts
+  - maccy
+  - meetingbar
+  # Utils
+  - the-unarchiver
+  - appcleaner
+  - kap
+  - iterm2
+  - { name: virtualbox, arch: x86_64, tags: ["!salesforce"] }
+  - { name: virtualbox-extension-pack, arch: x86_64, tags: ["!salesforce"] }
+  #- unetbootin
+  #- vnc-viewer
+  #- teamviewer
+  #- ovito
+  #- balenaetcher
+  #- android-file-transfer
+  # Network tools
+  - rapidapi
+  - postman
+  #- netspot
+  #- wireshark
+  # Devices
+  - logitech-options
+  # Securiry
+  - 1password
+  # Browsers
+  - { name: google-chrome, tags: "!salesforce" }
+  - firefox
+  - arc
+  # Social
+  - whatsapp
+  #- telegram
+  #- slack
+  - { name: discord, tags: ["gaming-apps", "!salesforce"] }
+  - zoom
+  # Develop
+  - temurin8
+  - temurin11
+  - temurin17
+  - temurin21
+  - temurin
+  - zed
+  - visual-studio-code
+  - jetbrains-toolbox
+  #- docker
+  #- unity
+  # Design
+  #- sketch
+  # Media
+  #- vlc
+  - iina
+  - spotify
+  #- handbrake
+  #- audacity
+  # Office
+  - obsidian
+  - microsoft-office
+  #- calibre
+  #- notion
+  # Files
+  #- dropbox
+  #- google-drive
+  - { name: proton-drive, tags: ["!salesforce"] }
+  - { name: cyberduck, tags: ["!salesforce"] }
+  #- transmission
+  # Gaming
+  - { name: steam, tags: ["gaming-apps", "!salesforce"] }
+  - { name: battle-net, tags: ["gaming-apps", "!salesforce"] }
+  - { name: epic-games, tags: ["gaming-apps", "!salesforce"] }
+  - { name: openemu, tags: ["gaming-apps", "!salesforce"] }
+  - { name: sony-ps-remote-play, tags: ["gaming-apps", "!salesforce"] }
+
+cask_fonts:
+  - hack
+  - hack-nerd-font
+  - input
+  - sf-compact
+  - sf-mono
+  - sf-mono-for-powerline
+  - sf-pro
+
+mas_apps:
+  - 497799835 # Xcode
+  - 441258766 # Magnet
+  - 937984704 # Amphetamine
+  #- 407963104 # Pixelmator
+  - { id: 409183694, state: absent } # Keynote
+  - { id: 409201541, state: absent } # Pages
+  - { id: 409203825, state: absent } # Numbers
+  - { id: 682658836, state: absent } # GarageBand
+
+pip_apps:
+
+npm_apps:
+
+links:
+  - shell/shellrc: ~/.shellrc
+  - ssh/config: ~/.ssh/config
+  - bin: ~/.bin

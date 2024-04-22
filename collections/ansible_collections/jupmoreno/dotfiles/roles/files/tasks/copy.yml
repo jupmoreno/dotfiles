@@ -1,0 +1,15 @@
+- block:
+    - name: Create directory
+      file:
+        path: "{{ file_item_dst | dirname }}"
+        state: "directory"
+    - name: Copy "{{ [files_base_path | default(''), file_item_src] | path_join }}" -> "{{ file_item_dst }}"
+      copy:
+        src: "{{ [files_base_path | default(''), file_item_src] | path_join }}"
+        dest: "{{ file_item_dst }}"
+        force: "{{ file_item.force | default(true) }}"
+        backup: "{{ file_item.backup | default(true) }}"
+  when:
+    - file_item is defined
+    - file_item_src is defined
+    - file_item_dst is defined

@@ -1,0 +1,23 @@
+files_base_path:
+files_default_state: link
+
+brew_default_state: latest
+brew_upgrade_all: false
+
+cask_default_state: latest
+cask_upgrade_all: false
+
+mas_default_state: latest
+mas_upgrade_all: false
+
+pip_default_state: latest
+
+npm_default_state: latest
+
+apps:
+  taps:
+  brew:
+  cask:
+  mas:
+  npm:
+  pip:

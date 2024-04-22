@@ -1,4 +1,5 @@
 # Juan's dotfiles
+
 A backup of my macOS apps and settings
 
 ## Installation

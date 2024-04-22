@@ -1,10 +1,8 @@
 eval "$(/usr/local/bin/brew shellenv)"
 
+[ -f ~/.config/dotfiles/env ] && source ~/.config/dotfiles/env
+
 [ -f ~/.shellrc_local ] && source ~/.shellrc_local
-
-[ -d $HOME/Projects ] && export projects="$HOME/Projects"
-
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
@@ -13,23 +11,24 @@ export PATH="/usr/local/opt/swift/bin:$PATH"
 export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
 export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
 export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
+export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 export PATH="$HOME/.bin:$PATH"
 
 eval $(thefuck --alias)
 
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
-#for D in /Library/Java/JavaVirtualMachines/*/; do jenv add ${D}Contents/Home/; done
-#jenv global 1.8
 
 export EDITOR="code -w"
 
-export STARSHIP_CONFIG=~/.config/starship/config.toml
-export ATUIN_CONFIG_DIR=~/.config/atuin
+export STARSHIP_CONFIG=~/.config/shell/starship/config.toml
+export ATUIN_CONFIG_DIR=~/.config/shell/atuin
 
 export FZF_DEFAULT_OPTS="--height 40% --no-info"
 
 alias awslocal="aws --profile localstack --endpoint-url=http://localhost/localstack"
+
+[ -d $HOME/Projects ] && export projects="$HOME/Projects"
 
 # From: https://github.com/ahmetb/kubectl-aliases
 [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
