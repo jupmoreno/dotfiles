@@ -71,6 +71,7 @@ brew_apps:
     files:
       - git/gitignore: ~/.gitignore_global
       - git/gitconfig: ~/.gitconfig
+      - git/gitconfig.d: ~/.gitconfig.d
   - gh
   - diff-so-fancy
   - yuicompressor
