@@ -1,4 +1,4 @@
-eval "$(/usr/local/bin/brew shellenv)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 [ -f ~/.config/dotfiles/env ] && source ~/.config/dotfiles/env
 
