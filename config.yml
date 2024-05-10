@@ -181,6 +181,7 @@ cask_apps:
   # Media
   #- vlc
   - iina
+  - tidal
   - spotify
   #- handbrake
   #- audacity
