@@ -47,7 +47,6 @@ check_ansible_installed() {
 		info "Installing ansible..."
 		brew install ansible
 		success "Installed ansible"
-		exit 1
 	fi
 }
 
