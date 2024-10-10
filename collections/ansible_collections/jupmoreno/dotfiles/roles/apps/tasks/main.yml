@@ -1,3 +1,9 @@
+- name: Install "mas"
+  community.general.homebrew:
+    name: mas
+    state: latest
+  tags: mas
+
 - include_tasks:
     file: tap.yml
   tags:
