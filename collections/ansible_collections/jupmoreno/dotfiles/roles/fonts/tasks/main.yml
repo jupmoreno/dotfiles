@@ -1,6 +1,6 @@
 - name: Install cask fonts
   community.general.homebrew_cask:
-    name: "homebrew/cask-fonts/font-{{ cask_font }}"
+    name: "font-{{ cask_font }}"
     state: "latest"
   loop: "{{ fonts.cask | default([], true) }}"
   loop_control:
