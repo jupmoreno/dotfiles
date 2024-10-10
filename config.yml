@@ -1,6 +1,5 @@
 taps:
   - hashicorp/tap
-  - homebrew/cask-versions
   - localstack/tap
 
 brew_apps:
