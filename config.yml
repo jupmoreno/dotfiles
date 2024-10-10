@@ -167,11 +167,11 @@ cask_apps:
   - { name: discord, tags: ["gaming-apps", "!salesforce"] }
   - zoom
   # Develop
-  - temurin8
-  - temurin11
-  - temurin17
-  - temurin21
   - temurin
+  - temurin@8
+  - temurin@11
+  - temurin@17
+  - temurin@21
   - zed
   - visual-studio-code
   - jetbrains-toolbox
