@@ -36,6 +36,7 @@ check_brew_installed() {
 	if ! (hash brew 2>/dev/null); then
 		info "Installing homebrew..."
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		eval "$(/opt/homebrew/bin/brew shellenv)"
 		success "Done"
 	fi
 }
