@@ -9,12 +9,14 @@ brew_apps:
       - shell/bashrc: ~/.bashrc
       - shell/bash_profile: ~/.bash_profile
       - shell/bash_sensible: ~/.config/shell/.bash_sensible
+      - shell/shellrc: ~/.shellrc
   - bash-preexec
   - bash-completion@2
   - name: zsh
     files:
       - shell/zshrc: ~/.zshrc
       - shell/zsh_plugins: ~/.config/shell/.zsh_plugins
+      - shell/shellrc: ~/.shellrc
   - zsh-completions
   - name: fzf
     files:
@@ -226,6 +228,5 @@ pip_apps:
 npm_apps:
 
 links:
-  - shell/shellrc: ~/.shellrc
   - ssh/config: ~/.ssh/config
   - bin: ~/.bin
