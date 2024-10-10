@@ -26,6 +26,9 @@
         - name: Install homebrew
           command:
             cmd: /bin/bash -c "NONINTERACTIVE=1 $(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        - name: Load brew
+          command:
+            cmd: eval "$(/opt/homebrew/bin/brew shellenv)"
       tags: always
 
     - name: Upgrade homebrew
