@@ -75,8 +75,8 @@ main() {
 		case $key in
 		    -h|--home)      PARAM_HOME="$1"; shift ;;
 		    -c|--config)    PARAM_CONFIG="$1"; shift ;;
-		    -t|--tags)      IFS=, read -a PARAM_TAGS <<< <<<"$1"; shift ;;
-		    -s|--skip-tags) IFS=, read -a PARAM_SKIP_TAGS <<< <<<"$1"; shift ;;
+		    -t|--tags)      IFS=, read -a PARAM_TAGS <<<"$1"; shift ;;
+		    -s|--skip-tags) IFS=, read -a PARAM_SKIP_TAGS <<<"$1"; shift ;;
 		    *)              fail "Unknown parameter: $key"; exit 1 ;;
 		esac
 	done
