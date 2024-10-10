@@ -1,7 +1,3 @@
-- name: Tap fonts repository
-  community.general.homebrew_tap:
-    name: homebrew/cask-fonts
-
 - name: Install cask fonts
   community.general.homebrew_cask:
     name: "homebrew/cask-fonts/font-{{ cask_font }}"
