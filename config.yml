@@ -124,7 +124,7 @@ brew_apps:
 
 cask_apps:
   # System utils
-  - bartender
+  - jordanbaird-ice
   #- bettertouchtool
   - karabiner-elements
   #- alfred
