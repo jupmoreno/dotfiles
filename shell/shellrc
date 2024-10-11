@@ -31,8 +31,10 @@ alias awslocal="aws --profile localstack --endpoint-url=http://localhost/localst
 [ -d $HOME/Projects ] && export projects="$HOME/Projects"
 
 # From: https://github.com/ahmetb/kubectl-aliases
-[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
+[ -f ~/.config/shell/kubectl_aliases ] && source ~/.config/shell/kubectl_aliases
+
 function kubectl() { echo "+ kubectl $@">&2; command kubectl $@; }
+
 # From: https://gist.github.com/so0k/42313dbb3b547a0f51a547bb968696ba
 function kjq() {
   OUTPUT=$(kubectl -o json $@);
