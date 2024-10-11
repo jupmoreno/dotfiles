@@ -131,6 +131,7 @@ cask_apps:
   - raycast
   - itsycal
   - gas-mask
+  - lulu
   #- lumen
   - contexts
   - maccy
