@@ -92,3 +92,5 @@ show_help = false
 # cwd_filter = [
 #   "^/very/secret/area"
 # ]
+
+enter_accept = true
