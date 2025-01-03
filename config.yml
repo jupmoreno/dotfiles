@@ -140,7 +140,7 @@ cask_apps:
   - the-unarchiver
   - appcleaner
   - kap
-  - iterm2
+  - ghostty
   - { name: virtualbox, arch: x86_64, tags: ["!salesforce"] }
   - { name: virtualbox-extension-pack, arch: x86_64, tags: ["!salesforce"] }
   #- unetbootin
