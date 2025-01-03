@@ -89,6 +89,7 @@ brew_apps:
   - opentofu
   - terraform-docs
   - hashicorp/tap/vault
+  - libpq
   # Editors
   - name: vim
     files:
