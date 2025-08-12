@@ -1,3 +1,12 @@
+- name: Tap repository for cask app "{{ cask_app.name | default(cask_app) }}"
+  community.general.homebrew_tap:
+    name: "{{ cask_app.name | default(cask_app) | regex_replace('^(.*?/.*?)/.*$', '\\1') }}"
+  tags: "{{ cask_app.tags | default(omit) }}"
+  when:
+    - cask_app is defined
+    - cask_app.name | default(cask_app) | regex_search('^.*?/.*?/.*$')
+    - cask_app.arch | default(ansible_architecture, true) == ansible_architecture
+
 - name: Install cask app "{{ cask_app.name | default(cask_app) }}"
   community.general.homebrew_cask:
     name: "{{ cask_app.name | default(cask_app) }}"

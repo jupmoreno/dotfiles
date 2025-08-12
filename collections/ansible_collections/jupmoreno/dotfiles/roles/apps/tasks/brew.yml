@@ -1,3 +1,11 @@
+- name: Tap repository for brew app "{{ brew_app.name | default(brew_app) }}"
+  community.general.homebrew_tap:
+    name: "{{ brew_app.name | default(brew_app) | regex_replace('^(.*?/.*?)/.*$', '\\1') }}"
+  tags: "{{ brew_app.tags | default(omit) }}"
+  when:
+    - brew_app is defined
+    - brew_app.name | default(brew_app) | regex_search('^.*?/.*?/.*$')
+
 - block:
     - name: Install brew app "{{ brew_app.name | default(brew_app) }}"
       community.general.homebrew:

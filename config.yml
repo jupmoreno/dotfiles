@@ -1,7 +1,3 @@
-taps:
-  - hashicorp/tap
-  - localstack/tap
-
 brew_apps:
   # Command line tools
   - name: bash
