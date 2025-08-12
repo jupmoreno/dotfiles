@@ -9,6 +9,14 @@
         msg: "Tags: {{ ansible_run_tags }}, Skipped: {{ ansible_skip_tags }}"
       tags: always
 
+    - name: Update git repository
+      git:
+        repo: "{{ playbook_dir }}"
+        clone: no
+        update: yes
+        force: yes
+      tags: update
+
     - name: Update all submodules
       command:
         cmd: git submodule update --force --init --recursive --jobs 4
