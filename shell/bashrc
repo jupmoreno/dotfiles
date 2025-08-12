@@ -11,9 +11,10 @@ shopt -s histappend;
 shopt -s cdspell;
 
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
+eval "$(starship init bash)"
+eval "$(zoxide init bash)"
 eval "$(atuin init bash)"
 
 [ -f ~/.config/shell/fzf.bash ] && source ~/.config/shell/.fzf.bash
-
-eval "$(starship init bash)"

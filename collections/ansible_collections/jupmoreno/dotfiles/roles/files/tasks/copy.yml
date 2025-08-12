@@ -1,14 +1,30 @@
 - block:
-    - name: Create directory
+    - name: Create directory for {{ file_item_dst }}
       file:
         path: "{{ file_item_dst | dirname }}"
-        state: "directory"
-    - name: Copy "{{ [files_base_path | default(''), file_item_src] | path_join }}" -> "{{ file_item_dst }}"
+        state: directory
+
+    - name: Copy "{{ file_item_src_path }}" -> "{{ file_item_dst }}"
       copy:
-        src: "{{ [files_base_path | default(''), file_item_src] | path_join }}"
+        src: "{{ file_item_src_path }}"
         dest: "{{ file_item_dst }}"
         force: "{{ file_item.force | default(true) }}"
         backup: "{{ file_item.backup | default(true) }}"
+      when: not is_template_file
+
+    - name: Copy template "{{ file_item_src_path }}" -> "{{ file_item_dst }}"
+      template:
+        src: "{{ file_item_src_path }}"
+        dest: "{{ file_item_dst }}"
+        force: "{{ file_item.force | default(true) }}"
+        backup: "{{ file_item.backup | default(true) }}"
+      when: is_template_file
+
+  vars:
+    file_item_src_path: "{{ [files_base_path | default(''), file_item_src] | path_join }}"
+    file_item_src_extension: "{{ file_item_src | splitext | last | lower }}"
+    is_template_file: "{{ file_item_src_extension in files_templates }}"
+
   when:
     - file_item is defined
     - file_item_src is defined

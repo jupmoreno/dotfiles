@@ -2,10 +2,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 [ -f ~/.config/dotfiles/env ] && source ~/.config/dotfiles/env
 
+alias ls="ls --color"
+
 [ -f ~/.shellrc_local ] && source ~/.shellrc_local
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
 export PATH="/usr/local/opt/whois/bin:$PATH"
 export PATH="/usr/local/opt/swift/bin:$PATH"
 export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
@@ -13,12 +15,19 @@ export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
 export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="$HOME/.bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 
 eval $(thefuck --alias)
 
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+# export SDKMAN_DIR=$(brew --prefix sdkman-cli)/libexec
+# [[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 
 export EDITOR="code -w"
 
@@ -31,8 +40,9 @@ alias awslocal="aws --profile localstack --endpoint-url=http://localhost/localst
 
 [ -d $HOME/Projects ] && export projects="$HOME/Projects"
 
-# From: https://github.com/ahmetb/kubectl-aliases
 [ -f ~/.config/shell/kubectl_aliases ] && source ~/.config/shell/kubectl_aliases
+[ -f ~/.config/shell/tmux_aliases ] && source ~/.config/shell/tmux_aliases
+[ -f ~/.config/zellij/aliases ] && source ~/.config/zellij/aliases
 
 function kubectl() { echo "+ kubectl $@">&2; command kubectl $@; }
 

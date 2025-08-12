@@ -1,14 +1,19 @@
 - block:
-    - name: Create directory
+    - name: Create directory for {{ file_item_dst }}
       file:
         path: "{{ file_item_dst | dirname }}"
-        state: "directory"
-    - name: Link "{{ file_item_dst }}" -> "{{ [files_base_path | default(''), file_item_src] | path_join }}"
+        state: directory
+
+    - name: Link "{{ file_item_dst }}" -> "{{ file_item_src_path }}"
       file:
-        src: "{{ [files_base_path | default(''), file_item_src] | path_join }}"
+        src: "{{ file_item_src_path }}"
         dest: "{{ file_item_dst }}"
         state: "{{ file_item_state }}"
         force: "{{ file_item.force | default(false) }}"
+
+  vars:
+    file_item_src_path: "{{ [files_base_path | default(''), file_item_src] | path_join }}"
+
   when:
     - file_item is defined
     - file_item_src is defined

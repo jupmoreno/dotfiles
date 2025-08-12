@@ -28,6 +28,12 @@ brew_apps:
   - name: atuin
     files:
       - shell/atuin.toml: ~/.config/shell/atuin/config.toml
+  - name: tmux
+    files:
+      - shell/tmux_aliases: ~/.config/shell/tmux_aliases
+  - name: zellij
+    files:
+      - shell/zellij: ~/.config/zellij
   - zoxide
   - thefuck
   - cheat
@@ -68,6 +74,7 @@ brew_apps:
   - make
   - cmake
   - jenv
+  - sdkman/tap/sdkman-cli
   - name: git
     files:
       - git/gitignore: ~/.gitignore_global
@@ -77,6 +84,7 @@ brew_apps:
   - diff-so-fancy
   - yuicompressor
   - artillery
+  - nvm
   # Infrastructure tools
   - name: kubernetes-cli
     files:
@@ -89,6 +97,9 @@ brew_apps:
   - opentofu
   - terraform-docs
   - hashicorp/tap/vault
+  - 1password-cli
+  - aider
+  - sst/tap/opencode
   - libpq
   # Editors
   - name: vim
@@ -157,6 +168,7 @@ cask_apps:
   #- wireshark
   # Devices
   - logitech-options
+  - insta360-link-controller
   # Securiry
   - 1password
   # Browsers

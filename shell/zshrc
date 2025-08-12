@@ -1,17 +1,31 @@
 [ -f ~/.shellrc ] && source ~/.shellrc
 
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+[ -f ~/.config/shell/.zsh_plugins ] && source ~/.config/shell/.zsh_plugins
 
-  autoload -Uz compinit
-  compinit
-  compaudit | xargs chmod go-w
-fi
+HISTSIZE=10000
+SAVEHIST=$HISTSIZE
+HISTFILE=~/.zsh_history
+HISTDUP=erase
 
-eval "$(atuin init zsh)"
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_ignore_dups
+setopt hist_save_no_dups
+setopt hist_find_no_dups
 
-[ -f ~/.config/shell/.fzf.zsh ] && source ~/.config/shell/.fzf.zsh
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors '${(s.:.)LS_COLORS}'
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'exa --color $realpath'
+
+autoload -U compinit && compinit
+zinit cdreplay -q
 
 eval "$(starship init zsh)"
+eval "$(atuin init zsh)"
+eval "$(zoxide init zsh --no-cmd)"
 
-[ -f ~/.config/shell/zsh_plugins ] && source ~/.config/shell/.zsh_plugins
+[ -f ~/.config/shell/.fzf.zsh ] && source ~/.config/shell/.fzf.zsh

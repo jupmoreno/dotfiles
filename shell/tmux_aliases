@@ -1,0 +1,11 @@
+alias 't'='tmux new-session -A -s "$(basename $PWD) $(echo $PWD | shasum -a 256 | cut -c1-4)"'
+alias 'tn'='tmux new-session -s'
+alias 'tl'="tmux list-sessions -F '#{s/ [a-f0-9][a-f0-9][a-f0-9][a-f0-9]$//:session_name}' 2>/dev/null || echo 'no sessions'"
+alias 'ta'='tmux attach-session'
+alias 'tan'='tmux attach-session -t'
+alias 'to'='tmux attach-session -t'
+alias 'ts'='tmux switch -t'
+alias 'tlinks'="tmux capture-pane -J -p | grep -oE '(https?):\/\/.*[^>]' | fzf-tmux -d20 --multi --bind alt-a:select-all,alt-d:deselect-all | xargs open"
+alias 'tk'='tmux kill-session'
+alias 'tkn'='tmux kill-session -t'
+alias 'tka'="tmux kill-session -a"

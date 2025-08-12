@@ -87,7 +87,8 @@
 	remotes = remote --verbose
 	aliases = config --get-regexp alias
 	branches-clean = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
-	sign-since = git rebase --exec "git commit --amend --no-edit -n -S" -i $1
+	sign-since = "!git rebase --exec 'git commit --amend --no-edit -n -S' -i $1"
+	commiter = !git show -s --format='%ae' $1
 
 [url "git@github.com:"]
 	insteadOf = "gh:"

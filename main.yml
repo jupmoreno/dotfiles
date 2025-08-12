@@ -36,6 +36,18 @@
         update_homebrew: true
       tags: update
 
+    - name: Install 1password-cli
+      community.general.homebrew:
+        name: 1password-cli
+        state: present
+      tags: always
+
+    - name: Install 1password
+      community.general.homebrew_cask:
+        name: 1password
+        state: present
+      tags: always
+
   tasks:
     - name: Install apps
       include_role:

@@ -1,5 +1,8 @@
 files_base_path:
 files_default_state: link
+files_templates:
+  - '.tpl'
+  - '.j2'
 
 files:
   default:
