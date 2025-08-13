@@ -1,0 +1,7 @@
+- name: Update macOS system
+  command:
+    cmd: softwareupdate --all --install --agree-to-license
+  become: true
+  when: ansible_os_family == "Darwin"
+  tags:
+    - update

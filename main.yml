@@ -107,10 +107,19 @@
 
     - name: Update system
       include_role:
-        name: "jupmoreno.dotfiles.macos"
+        name: "jupmoreno.dotfiles.system"
         apply:
           tags: system
       tags:
         - always
         - update
-        - system
+
+    - name: Configure macOS system preferences
+      include_role:
+        name: "jupmoreno.dotfiles.macos"
+        apply:
+          tags: system-config
+      tags:
+        - always
+        - config
+        - system-config
