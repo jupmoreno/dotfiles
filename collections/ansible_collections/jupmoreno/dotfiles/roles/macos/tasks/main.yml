@@ -1,16 +1,15 @@
 - name: Configure macOS system preferences
-  become: true
   block:
     - name: Configure General UI/UX settings
       block:
         - name: Click in the scroll bar to jump to the spot that's clicked
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleScrollerPagingBehavior
             type: int
             value: 1
 
         - name: Expand save panel by default
-          community.general.defaults:
+          community.general.osx_defaults:
             key: "{{ item }}"
             type: bool
             value: true
@@ -19,7 +18,7 @@
             - NSNavPanelExpandedStateForSaveMode2
 
         - name: Expand print panel by default
-          community.general.defaults:
+          community.general.osx_defaults:
             key: "{{ item }}"
             type: bool
             value: true
@@ -28,46 +27,46 @@
             - PMPrintingExpandedStateForPrint2
 
         - name: Save to disk by default (not iCloud)
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSDocumentSaveNewDocumentsToCloud
             type: bool
             value: false
 
         - name: Quit printer app when finished
-          community.general.defaults:
+          community.general.osx_defaults:
             key: "Quit When Finished"
             type: bool
             value: true
             domain: com.apple.print.PrintingPrefs
 
         - name: Disable automatic termination of inactive apps
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSDisableAutomaticTermination
             type: bool
             value: true
 
         - name: Set Help Viewer to non-floating mode
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DevMode
             type: bool
             value: true
             domain: com.apple.helpviewer
 
         - name: Disable crash reporter
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DialogType
             type: string
             value: "none"
             domain: com.apple.CrashReporter
 
         - name: Set action on double-clicking window
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleActionOnDoubleClick
             type: string
             value: "Maximize"
 
         - name: Enable dark mode
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleInterfaceStyle
             type: string
             value: "Dark"
@@ -75,19 +74,19 @@
     - name: Configure General animations
       block:
         - name: Disable animated focus ring
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSUseAnimatedFocusRing
             type: bool
             value: false
 
         - name: Display dialogs instantly
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSWindowResizeTime
             type: float
             value: 0.001
 
         - name: Disable window animations
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSAutomaticWindowAnimationsEnabled
             type: bool
             value: false
@@ -95,73 +94,73 @@
     - name: Configure keyboard and locale settings
       block:
         - name: Disable automatic capitalization
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSAutomaticCapitalizationEnabled
             type: bool
             value: false
 
         - name: Disable smart quotes
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSAutomaticQuoteSubstitutionEnabled
             type: bool
             value: false
 
         - name: Disable smart dashes
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSAutomaticDashSubstitutionEnabled
             type: bool
             value: false
 
         - name: Disable automatic period substitution
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSAutomaticPeriodSubstitutionEnabled
             type: bool
             value: false
 
         - name: Disable auto-correct
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSAutomaticSpellingCorrectionEnabled
             type: bool
             value: false
 
         - name: Disable press-and-hold for keys
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ApplePressAndHoldEnabled
             type: bool
             value: false
 
         - name: Set fast keyboard repeat rate
-          community.general.defaults:
+          community.general.osx_defaults:
             key: KeyRepeat
             type: int
             value: 3
 
         - name: Set initial key repeat delay
-          community.general.defaults:
+          community.general.osx_defaults:
             key: InitialKeyRepeat
             type: int
             value: 15
 
         - name: Enable full keyboard access (e.g. enable Tab in modal dialogs)
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleKeyboardUIMode
             type: int
             value: 3
 
         - name: Set metric units
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleMetricUnits
             type: bool
             value: true
 
         - name: Set measurement units to centimeters
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleMeasurementUnits
             type: string
             value: "Centimeters"
 
         - name: Set temperature unit to Celsius
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleTemperatureUnit
             type: string
             value: "Celsius"
@@ -169,21 +168,21 @@
     - name: Configure menu bar settings
       block:
         - name: Show day of week and 24-hour clock
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DateFormat
             type: string
             value: "EEE dd HH:mm:ss"
             domain: com.apple.menuextra.clock
 
         - name: Hide Siri
-          community.general.defaults:
+          community.general.osx_defaults:
             key: StatusMenuVisible
             type: int
             value: 0
             domain: com.apple.Siri
 
         - name: Disable menu bar full screen animation
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSToolbarFullScreenAnimationDuration
             type: float
             value: 0
@@ -191,41 +190,41 @@
     - name: Configure Finder settings
       block:
         - name: Set default location for new Finder windows
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NewWindowTarget
             type: string
             value: "PfLo"
             domain: com.apple.finder
 
         - name: Set default path for new Finder windows
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NewWindowTargetPath
             type: string
             value: "file://{{ ansible_env.HOME }}/"
             domain: com.apple.finder
 
         - name: Show all filename extensions
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AppleShowAllExtensions
             type: bool
             value: true
 
         - name: Disable extension change warning
-          community.general.defaults:
+          community.general.osx_defaults:
             key: FXEnableExtensionChangeWarning
             type: bool
             value: false
             domain: com.apple.finder
 
         - name: Show status bar
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ShowStatusBar
             type: bool
             value: true
             domain: com.apple.finder
 
         - name: Show path bar
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ShowPathbar
             type: bool
             value: true
@@ -236,151 +235,148 @@
           become: true
 
         - name: Disable all animations
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DisableAllAnimations
             type: bool
             value: true
             domain: com.apple.finder
 
         - name: Disable Quick Look animations
-          community.general.defaults:
+          community.general.osx_defaults:
             key: QLPanelAnimationDuration
             type: float
             value: 0
 
         - name: Keep folders on top when sorting
-          community.general.defaults:
+          community.general.osx_defaults:
             key: _FXSortFoldersFirst
             type: bool
             value: true
             domain: com.apple.finder
 
         - name: Set default search scope to current folder
-          community.general.defaults:
+          community.general.osx_defaults:
             key: FXDefaultSearchScope
             type: string
             value: "SCcf"
             domain: com.apple.finder
 
         - name: Avoid .DS_Store on network volumes
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DSDontWriteNetworkStores
             type: bool
             value: true
             domain: com.apple.desktopservices
 
         - name: Avoid .DS_Store on USB volumes
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DSDontWriteUSBStores
             type: bool
             value: true
             domain: com.apple.desktopservices
 
         - name: Enable spring loading for directories
-          community.general.defaults:
+          community.general.osx_defaults:
             key: com.apple.springing.enabled
             type: bool
             value: true
 
         - name: Reduce spring loading delay
-          community.general.defaults:
+          community.general.osx_defaults:
             key: com.apple.springing.delay
             type: float
             value: 0.1
 
         - name: Remove toolbar title rollover delay
-          community.general.defaults:
+          community.general.osx_defaults:
             key: NSToolbarTitleViewRolloverDelay
             type: float
             value: 0
 
         - name: Auto-open new Finder window for mounted volumes
           block:
-            - community.general.defaults:
+            - name: Auto-open read-only disk images
+              community.general.osx_defaults:
                 domain: com.apple.frameworks.diskimages
-                settings:
-                  auto-open-ro-root: true
-                  auto-open-rw-root: true
-                type: dict
-            - community.general.defaults:
+                key: auto-open-ro-root
+                type: bool
+                value: true
+            - name: Auto-open read-write disk images
+              community.general.osx_defaults:
+                domain: com.apple.frameworks.diskimages
+                key: auto-open-rw-root
+                type: bool
+                value: true
+            - name: Auto-open removable disks
+              community.general.osx_defaults:
                 key: OpenWindowForNewRemovableDisk
                 type: bool
                 value: true
                 domain: com.apple.finder
 
         - name: Use icons view by default
-          community.general.defaults:
+          community.general.osx_defaults:
             key: FXPreferredViewStyle
             type: string
             value: "icnv"
             domain: com.apple.finder
 
-        - name: Expand File Info panes
-          community.general.defaults:
-            key: FXInfoPanesExpanded
-            type: dict
-            value:
-              General: true
-              OpenWith: true
-              Privileges: true
-            domain: com.apple.finder
+        # - name: Configure Finder icon view settings
+        #   block:
+        #     - name: Set desktop icon view settings
+        #       command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 
-        - name: Configure Finder icon view settings
-          block:
-            - name: Set desktop icon view settings
-              command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon view settings
+        #       command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon view settings
-              command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon view settings (secondary)
+        #       command: /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon view settings (secondary)
-              command: /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set desktop icon arrangement
+        #       command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set desktop icon arrangement
-              command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon arrangement
+        #       command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon arrangement
-              command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon arrangement (secondary)
+        #       command: /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon arrangement (secondary)
-              command: /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy name" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set desktop icon grid spacing
+        #       command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set desktop icon grid spacing
-              command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon grid spacing
+        #       command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon grid spacing
-              command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon grid spacing (secondary)
+        #       command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon grid spacing (secondary)
-              command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 50" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set desktop icon size
+        #       command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set desktop icon size
-              command: /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon size
+        #       command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
 
-            - name: Set standard icon size
-              command: /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
-
-            - name: Set standard icon size (secondary)
-              command: /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
+        #     - name: Set standard icon size (secondary)
+        #       command: /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
 
     - name: Configure screen settings
       block:
         - name: Require password after screen saver
-          community.general.defaults:
+          community.general.osx_defaults:
             key: askForPassword
             type: int
             value: 1
             domain: com.apple.screensaver
 
         - name: Set password delay to 1 second
-          community.general.defaults:
+          community.general.osx_defaults:
             key: askForPasswordDelay
             type: int
             value: 1
             domain: com.apple.screensaver
 
         - name: Set screen saver delay to 5 minutes
-          community.general.defaults:
+          community.general.osx_defaults:
             key: idleTime
             type: int
             value: 300
@@ -396,21 +392,21 @@
             mode: '0755'
 
         - name: Set screenshot location
-          community.general.defaults:
+          community.general.osx_defaults:
             key: location
             type: string
             value: "{{ ansible_env.HOME }}/Screenshots"
             domain: com.apple.screencapture
 
         - name: Disable shadow in screenshots
-          community.general.defaults:
+          community.general.osx_defaults:
             key: disable-shadow
             type: bool
             value: true
             domain: com.apple.screencapture
 
         - name: Set screenshot format to PNG
-          community.general.defaults:
+          community.general.osx_defaults:
             key: type
             type: string
             value: "png"
@@ -425,77 +421,77 @@
     - name: Configure Dock settings
       block:
         - name: Auto-hide Dock
-          community.general.defaults:
+          community.general.osx_defaults:
             key: autohide
             type: bool
             value: true
             domain: com.apple.dock
 
         - name: Set Dock autohide time modifier
-          community.general.defaults:
+          community.general.osx_defaults:
             key: autohide-time-modifier
             type: float
             value: 0.2
             domain: com.apple.dock
 
         - name: Set Dock autohide delay
-          community.general.defaults:
+          community.general.osx_defaults:
             key: autohide-delay
             type: float
             value: 0
             domain: com.apple.dock
 
         - name: Set Dock icon size
-          community.general.defaults:
+          community.general.osx_defaults:
             key: tilesize
             type: int
             value: 64
             domain: com.apple.dock
 
         - name: Hide recently used apps
-          community.general.defaults:
+          community.general.osx_defaults:
             key: show-recents
             type: bool
             value: false
             domain: com.apple.dock
 
         - name: Set minimize effect to scale
-          community.general.defaults:
+          community.general.osx_defaults:
             key: mineffect
             type: string
             value: "scale"
             domain: com.apple.dock
 
         - name: Enable scroll to open
-          community.general.defaults:
+          community.general.osx_defaults:
             key: scroll-to-open
             type: bool
             value: true
             domain: com.apple.dock
 
         - name: Enable highlight hover effect
-          community.general.defaults:
+          community.general.osx_defaults:
             key: mouse-over-hilite-stack
             type: bool
             value: true
             domain: com.apple.dock
 
         - name: Enable spring loading for Dock items
-          community.general.defaults:
+          community.general.osx_defaults:
             key: enable-spring-load-actions-on-all-items
             type: bool
             value: true
             domain: com.apple.dock
 
         - name: Show process indicators
-          community.general.defaults:
+          community.general.osx_defaults:
             key: show-process-indicators
             type: bool
             value: true
             domain: com.apple.dock
 
         - name: Clear persistent apps
-          community.general.defaults:
+          community.general.osx_defaults:
             key: persistent-apps
             type: array
             value: []
@@ -503,14 +499,14 @@
           run_once: true
 
         - name: Make hidden app icons translucent
-          community.general.defaults:
+          community.general.osx_defaults:
             key: showhidden
             type: bool
             value: true
             domain: com.apple.dock
 
         - name: Disable launch animation
-          community.general.defaults:
+          community.general.osx_defaults:
             key: launchanim
             type: bool
             value: false
@@ -519,21 +515,21 @@
     - name: Configure Mission Control
       block:
         - name: Speed up Mission Control animations
-          community.general.defaults:
+          community.general.osx_defaults:
             key: expose-animation-duration
             type: float
             value: 0.05
             domain: com.apple.dock
 
         - name: Don't group windows by application
-          community.general.defaults:
+          community.general.osx_defaults:
             key: expose-group-by-app
             type: bool
             value: false
             domain: com.apple.dock
 
         - name: Don't rearrange Spaces automatically
-          community.general.defaults:
+          community.general.osx_defaults:
             key: mru-spaces
             type: bool
             value: false
@@ -541,7 +537,7 @@
 
         # Hot Corners config values: 0=No action, 2=Mission Control, 3=App Windows, 4=Desktop, 5=Start Screen Saver, 6=Disable Screen Saver, 7=Dashboard, 10=Sleep Display, 11=Launchpad, 12=Notification Center. Modifier: 0=None.
         - name: Configure hot corners
-          community.general.defaults:
+          community.general.osx_defaults:
             domain: com.apple.dock
             type: int
           loop:
@@ -562,63 +558,43 @@
     - name: Configure Spotlight
       block:
         - name: Configure Spotlight search results
-          community.general.defaults:
+          community.general.osx_defaults:
             key: orderedItems
             type: array
             value:
-              - enabled: 1
-                name: "APPLICATIONS"
-              - enabled: 0
-                name: "MENU_SPOTLIGHT_SUGGESTIONS"
-              - enabled: 0
-                name: "MENU_CONVERSION"
-              - enabled: 1
-                name: "MENU_EXPRESSION"
-              - enabled: 0
-                name: "MENU_DEFINITION"
-              - enabled: 1
-                name: "SYSTEM_PREFS"
-              - enabled: 0
-                name: "DOCUMENTS"
-              - enabled: 0
-                name: "DIRECTORIES"
-              - enabled: 0
-                name: "PRESENTATIONS"
-              - enabled: 0
-                name: "SPREADSHEETS"
-              - enabled: 0
-                name: "PDF"
-              - enabled: 0
-                name: "MESSAGES"
-              - enabled: 0
-                name: "CONTACT"
-              - enabled: 0
-                name: "EVENT_TODO"
-              - enabled: 0
-                name: "IMAGES"
-              - enabled: 0
-                name: "BOOKMARKS"
-              - enabled: 0
-                name: "MUSIC"
-              - enabled: 0
-                name: "MOVIES"
-              - enabled: 0
-                name: "FONTS"
-              - enabled: 0
-                name: "MENU_OTHER"
+              - '{"enabled" = 1;"name" = "APPLICATIONS";}'
+              - '{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
+              - '{"enabled" = 0;"name" = "MENU_CONVERSION";}'
+              - '{"enabled" = 1;"name" = "MENU_EXPRESSION";}'
+              - '{"enabled" = 0;"name" = "MENU_DEFINITION";}'
+              - '{"enabled" = 1;"name" = "SYSTEM_PREFS";}'
+              - '{"enabled" = 0;"name" = "DOCUMENTS";}'
+              - '{"enabled" = 0;"name" = "DIRECTORIES";}'
+              - '{"enabled" = 0;"name" = "PRESENTATIONS";}'
+              - '{"enabled" = 0;"name" = "SPREADSHEETS";}'
+              - '{"enabled" = 0;"name" = "PDF";}'
+              - '{"enabled" = 0;"name" = "MESSAGES";}'
+              - '{"enabled" = 0;"name" = "CONTACT";}'
+              - '{"enabled" = 0;"name" = "EVENT_TODO";}'
+              - '{"enabled" = 0;"name" = "IMAGES";}'
+              - '{"enabled" = 0;"name" = "BOOKMARKS";}'
+              - '{"enabled" = 0;"name" = "MUSIC";}'
+              - '{"enabled" = 0;"name" = "MOVIES";}'
+              - '{"enabled" = 0;"name" = "FONTS";}'
+              - '{"enabled" = 0;"name" = "MENU_OTHER";}'
             domain: com.apple.Spotlight
 
     - name: Configure Launchpad
       block:
         - name: Disable Launchpad show animation
-          community.general.defaults:
+          community.general.osx_defaults:
             key: springboard-show-duration
             type: float
             value: 0
             domain: com.apple.dock
 
         - name: Disable Launchpad page animation
-          community.general.defaults:
+          community.general.osx_defaults:
             key: springboard-page-duration
             type: float
             value: 0
@@ -627,56 +603,56 @@
     - name: Configure App Store and updates
       block:
         - name: Enable WebKit Developer Tools in App Store
-          community.general.defaults:
+          community.general.osx_defaults:
             key: WebKitDeveloperExtras
             type: bool
             value: true
             domain: com.apple.appstore
 
         - name: Enable Debug Menu in App Store
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ShowDebugMenu
             type: bool
             value: true
             domain: com.apple.appstore
 
         - name: Enable automatic update check
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AutomaticCheckEnabled
             type: bool
             value: true
             domain: com.apple.SoftwareUpdate
 
         - name: Check for updates daily
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ScheduleFrequency
             type: int
             value: 1
             domain: com.apple.SoftwareUpdate
 
         - name: Download updates in background
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AutomaticDownload
             type: int
             value: 1
             domain: com.apple.SoftwareUpdate
 
         - name: Install critical updates
-          community.general.defaults:
+          community.general.osx_defaults:
             key: CriticalUpdateInstall
             type: int
             value: 1
             domain: com.apple.SoftwareUpdate
 
         - name: Turn on app auto-update
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AutoUpdate
             type: bool
             value: true
             domain: com.apple.commerce
 
         - name: Allow App Store to reboot on updates
-          community.general.defaults:
+          community.general.osx_defaults:
             key: AutoUpdateRestartRequired
             type: bool
             value: true
@@ -685,21 +661,21 @@
     - name: Configure Terminal
       block:
         - name: Set Terminal encoding to UTF-8
-          community.general.defaults:
+          community.general.osx_defaults:
             key: StringEncodings
             type: array
             value: [4]
             domain: com.apple.terminal
 
         - name: Enable Secure Keyboard Entry
-          community.general.defaults:
+          community.general.osx_defaults:
             key: SecureKeyboardEntry
             type: bool
             value: true
             domain: com.apple.terminal
 
         - name: Disable line marks
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ShowLineMarks
             type: int
             value: 0
@@ -708,35 +684,35 @@
     - name: Configure Activity Monitor
       block:
         - name: Show main window when launching
-          community.general.defaults:
+          community.general.osx_defaults:
             key: OpenMainWindow
             type: bool
             value: true
             domain: com.apple.ActivityMonitor
 
         - name: Visualize CPU usage in Dock icon
-          community.general.defaults:
+          community.general.osx_defaults:
             key: IconType
             type: int
             value: 5
             domain: com.apple.ActivityMonitor
 
         - name: Show all processes
-          community.general.defaults:
+          community.general.osx_defaults:
             key: ShowCategory
             type: int
             value: 0
             domain: com.apple.ActivityMonitor
 
         - name: Sort by CPU usage
-          community.general.defaults:
+          community.general.osx_defaults:
             key: SortColumn
             type: string
             value: "CPUUsage"
             domain: com.apple.ActivityMonitor
 
         - name: Set sort direction
-          community.general.defaults:
+          community.general.osx_defaults:
             key: SortDirection
             type: int
             value: 0
@@ -745,21 +721,21 @@
     - name: Configure TextEdit
       block:
         - name: Use plain text mode by default
-          community.general.defaults:
+          community.general.osx_defaults:
             key: RichText
             type: int
             value: 0
             domain: com.apple.TextEdit
 
         - name: Use UTF-8 encoding
-          community.general.defaults:
+          community.general.osx_defaults:
             key: PlainTextEncoding
             type: int
             value: 4
             domain: com.apple.TextEdit
 
         - name: Use UTF-8 encoding for writing
-          community.general.defaults:
+          community.general.osx_defaults:
             key: PlainTextEncodingForWrite
             type: int
             value: 4
@@ -768,14 +744,14 @@
     - name: Configure other applications
       block:
         - name: Enable debug menu in Disk Utility
-          community.general.defaults:
+          community.general.osx_defaults:
             key: DUDebugMenuEnabled
             type: bool
             value: true
             domain: com.apple.DiskUtility
 
         - name: Enable advanced image options in Disk Utility
-          community.general.defaults:
+          community.general.osx_defaults:
             key: advanced-image-options
             type: bool
             value: true
