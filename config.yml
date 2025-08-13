@@ -186,6 +186,7 @@ cask_apps:
   - zed
   - visual-studio-code
   - jetbrains-toolbox
+  - cursor
   #- docker
   #- unity
   # Design
@@ -228,6 +229,8 @@ mas_apps:
   - 497799835 # Xcode
   - 441258766 # Magnet
   - 937984704 # Amphetamine
+  - 1569813296 # 1Password for Safari
+  - 545519333 # Prime Video
   #- 407963104 # Pixelmator
   - { id: 409183694, state: absent } # Keynote
   - { id: 409201541, state: absent } # Pages
